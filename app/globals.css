@@ -2,20 +2,51 @@
 @tailwind components;
 @tailwind utilities;
 
+/**
+ * Tokens extraídos da identidade visual real da Algtrix (algtrix.com.br):
+ * roxo profundo de marca (--algtrix-violet/--brand-dark) e ciano de destaque
+ * (--algtrix-accent-strong). Tema claro — igual ao layout original — com
+ * essas cores reais aplicadas como marca/destaque sobre um fundo claro,
+ * em vez de tingir a página inteira de escuro.
+ */
 :root {
+  --algtrix-bg: #fcfbfe;
+  --algtrix-surface: #f5f2fa;
+  --algtrix-surface-2: #ece7f5;
+  --algtrix-surface-3: #e3ddf0;
+
+  --algtrix-border: rgba(28, 21, 51, 0.1);
+  --algtrix-border-strong: rgba(28, 21, 51, 0.18);
+  --algtrix-border-accent: rgba(15, 138, 151, 0.35);
+
+  --algtrix-text: #18122b;
+  --algtrix-muted: #5b5470;
+  --algtrix-dim: #8880a0;
+
+  --algtrix-accent: #0f8a97;
+  --algtrix-accent-hover: #0c6f7a;
+  --algtrix-accent-soft: rgba(15, 138, 151, 0.1);
+  --algtrix-accent-strong: #41b7c4;
+
+  --algtrix-violet: #5c4990;
+  --algtrix-violet-soft: rgba(92, 73, 144, 0.1);
+  --algtrix-amber: #b5661a;
+  --algtrix-risk: #c23b46;
+
+  /* Aliases retro-compatíveis usados por classes utilitárias existentes. */
   --brand-primary: #1c1533;
-  --brand-secondary: #4c3e7a;
-  --brand-dark: #120b24;
-  --brand-light: #2e2350;
+  --brand-secondary: var(--algtrix-violet);
+  --brand-dark: #1c1533;
+  --brand-light: var(--algtrix-surface-2);
 
-  --accent: #059669;
-  --accent-hover: #047857;
+  --accent: var(--algtrix-accent);
+  --accent-hover: var(--algtrix-accent-hover);
 
-  --surface: #fcfbfe;
-  --border: #e7e3ef;
+  --surface: var(--algtrix-surface);
+  --border: var(--algtrix-border);
 
-  --text-primary: #18122b;
-  --text-secondary: #5b5470;
+  --text-primary: var(--algtrix-text);
+  --text-secondary: var(--algtrix-muted);
   --text-inverse: #f5f3fa;
 }
 
@@ -28,14 +59,28 @@ html {
 }
 
 body {
-  background-color: var(--surface);
-  color: var(--text-primary);
+  background-color: var(--algtrix-bg);
+  color: var(--algtrix-text);
   font-feature-settings: 'cv11', 'ss01';
   -webkit-font-smoothing: antialiased;
 }
 
 ::selection {
-  background-color: rgba(5, 150, 105, 0.2);
+  background-color: var(--algtrix-accent-soft);
+  color: var(--algtrix-text);
+}
+
+/* Grade de pontos extremamente sutil usada como fundo de "data intelligence"
+   em seções de destaque (hero, CTA final). Aplicada via classe utilitária
+   .data-grid para manter a regra de custo de DOM (pseudo-elemento fixo,
+   nunca em containers que rolam). */
+.data-grid {
+  background-image: radial-gradient(circle, rgba(28, 21, 51, 0.1) 1px, transparent 1px);
+  background-size: 28px 28px;
+}
+
+.tabular {
+  font-variant-numeric: tabular-nums;
 }
 
 @media (prefers-reduced-motion: reduce) {

@@ -1,14 +1,24 @@
 'use client'
 
 import { useState } from 'react'
+import { CheckCircle } from '@phosphor-icons/react/dist/ssr/CheckCircle'
 import { ShieldCheck } from '@phosphor-icons/react/dist/ssr/ShieldCheck'
+import { LockKey } from '@phosphor-icons/react/dist/ssr/LockKey'
 import { Reveal } from '@/components/ui/Reveal'
 import { Button } from '@/components/ui/Button'
 import { pricing, PRICING_IS_PLACEHOLDER } from '@/config/pricing'
+import { product } from '@/config/product'
 import { formatCentsToBRL } from '@/lib/utils'
 import { track } from '@/lib/analytics'
 import { AnalyticsEvent } from '@/config/analytics'
 import { useLeadModal } from '@/components/LeadModalContext'
+
+const DETAILS = [
+  { label: 'Formato', value: product.deliverable.formats.join(' e ') },
+  { label: 'Atualização', value: product.deliverable.updateFrequency },
+  { label: 'Cobertura', value: product.deliverable.coverage },
+  { label: 'Entrega', value: 'Digital' },
+]
 
 export function Pricing() {
   const { openLead } = useLeadModal()
@@ -40,39 +50,69 @@ export function Pricing() {
   }
 
   return (
-    <section id="oferta" className="bg-zinc-50 py-20 sm:py-24">
-      <div className="mx-auto max-w-page px-4 sm:px-6 lg:px-10">
-        <Reveal className="text-center">
-          <h2 className="mx-auto max-w-[24ch] text-3xl font-bold leading-tight tracking-tight text-ink-primary sm:text-4xl">
+    <section id="oferta" className="bg-algtrix-surface py-20 sm:py-24">
+      <div className="mx-auto max-w-pageWide px-4 sm:px-6 lg:px-10">
+        <Reveal>
+          <h2 className="max-w-[26ch] font-sans text-3xl font-semibold leading-tight tracking-tight text-algtrix-text sm:text-4xl">
             Acesse a base agora.
           </h2>
         </Reveal>
 
-        <Reveal delay={0.08} className="mx-auto mt-10 max-w-md">
-          <div className="rounded-lg border-2 border-brand-primary bg-white p-8 text-center shadow-card">
-            {PRICING_IS_PLACEHOLDER && (
-              <p className="mb-4 rounded-full bg-amber-50 px-3 py-1.5 text-xs font-semibold text-amber-700">
-                Preço em definição, fale com a equipe
-              </p>
-            )}
-            <p className="text-4xl font-bold tracking-tight text-ink-primary">{priceLabel}</p>
-            {installmentLabel && <p className="mt-1.5 text-sm text-ink-secondary">{installmentLabel}</p>}
-            {pricing.savingsClaim && (
-              <p className="mt-2 text-sm font-medium text-accent-hover">{pricing.savingsClaim}</p>
-            )}
+        <div className="mt-10 grid gap-10 lg:grid-cols-2 lg:items-start">
+          <Reveal delay={0.05} className="order-2 lg:order-1">
+            <p className="text-sm font-semibold uppercase tracking-wide text-algtrix-dim">O que está incluído</p>
+            <ul className="mt-4 space-y-3">
+              {pricing.included.map((item) => (
+                <li key={item} className="flex items-start gap-3 text-[15px] text-algtrix-text">
+                  <CheckCircle size={18} weight="fill" className="mt-0.5 shrink-0 text-algtrix-accent" />
+                  {item}
+                </li>
+              ))}
+            </ul>
 
-            <Button size="lg" className="mt-7 w-full" onClick={handleBuy} disabled={status === 'loading'}>
-              {status === 'loading' ? 'Abrindo checkout...' : 'Comprar agora'}
-            </Button>
+            <div className="mt-8 grid grid-cols-2 gap-4">
+              {DETAILS.map((detail) => (
+                <div key={detail.label} className="rounded-lg border border-algtrix-border bg-algtrix-bg p-4">
+                  <p className="text-xs font-medium uppercase tracking-wide text-algtrix-dim">{detail.label}</p>
+                  <p className="mt-1.5 text-sm font-semibold text-algtrix-text">{detail.value}</p>
+                </div>
+              ))}
+            </div>
+          </Reveal>
 
-            {pricing.guarantee.enabled && (
-              <p className="mt-4 flex items-center justify-center gap-1.5 text-xs text-ink-secondary">
-                <ShieldCheck size={14} />
-                Garantia de {pricing.guarantee.days} dias
-              </p>
-            )}
-          </div>
-        </Reveal>
+          <Reveal delay={0.1} className="order-1 lg:order-2">
+            <div className="rounded-lg border-2 border-algtrix-accent bg-algtrix-bg p-8 text-center shadow-glow">
+              {PRICING_IS_PLACEHOLDER && (
+                <p className="mb-4 inline-flex rounded-full border border-algtrix-amber/40 bg-algtrix-amber/10 px-3 py-1.5 text-xs font-semibold text-algtrix-amber">
+                  Preço em definição, fale com a equipe
+                </p>
+              )}
+              <p className="font-mono text-4xl font-semibold tracking-tight text-algtrix-text">{priceLabel}</p>
+              {installmentLabel && <p className="mt-1.5 text-sm text-algtrix-muted">{installmentLabel}</p>}
+              {pricing.savingsClaim && (
+                <p className="mt-2 text-sm font-medium text-algtrix-accent">{pricing.savingsClaim}</p>
+              )}
+
+              <Button size="lg" className="mt-7 w-full" onClick={handleBuy} disabled={status === 'loading'}>
+                {status === 'loading' ? 'Abrindo checkout...' : 'Comprar agora'}
+              </Button>
+
+              <div className="mt-5 border-t border-algtrix-border pt-5">
+                {pricing.guarantee.enabled ? (
+                  <p className="flex items-center justify-center gap-1.5 text-xs text-algtrix-muted">
+                    <ShieldCheck size={14} className="text-algtrix-accent" />
+                    Garantia de {pricing.guarantee.days} dias{pricing.guarantee.description ? ` · ${pricing.guarantee.description}` : ''}
+                  </p>
+                ) : (
+                  <p className="flex items-center justify-center gap-1.5 text-xs text-algtrix-muted">
+                    <LockKey size={14} className="text-algtrix-dim" />
+                    Compra segura, dados protegidos e uso conforme a LGPD.
+                  </p>
+                )}
+              </div>
+            </div>
+          </Reveal>
+        </div>
       </div>
     </section>
   )

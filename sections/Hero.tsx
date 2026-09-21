@@ -4,35 +4,34 @@ import { Reveal } from '@/components/ui/Reveal'
 import { ButtonLink, Button } from '@/components/ui/Button'
 import { DataExplorerPanel } from '@/components/DataExplorerPanel'
 import { product } from '@/config/product'
-import { useLeadModal } from '@/components/LeadModalContext'
 import { track } from '@/lib/analytics'
 import { AnalyticsEvent } from '@/config/analytics'
 
 export function Hero() {
-  const { openLead } = useLeadModal()
-
   return (
-    <section id="produto" className="relative overflow-hidden bg-brand-dark pt-16 pb-20 sm:pt-20 sm:pb-24">
+    <section id="produto" className="relative overflow-hidden bg-algtrix-bg pt-16 pb-20 sm:pt-20 sm:pb-24">
+      <div className="data-grid pointer-events-none absolute inset-0 opacity-40" aria-hidden />
       <div
-        className="pointer-events-none absolute inset-0 opacity-60"
+        className="pointer-events-none absolute inset-0"
         style={{
           background:
-            'radial-gradient(circle at 15% 20%, rgba(76,62,122,0.35), transparent 45%), radial-gradient(circle at 85% 0%, rgba(5,150,105,0.14), transparent 40%)',
+            'radial-gradient(circle at 12% 15%, rgba(92,73,144,0.14), transparent 45%), radial-gradient(circle at 88% 0%, rgba(15,138,151,0.10), transparent 42%)',
         }}
         aria-hidden
       />
       <div id="hero-sentinel" className="absolute top-0 h-px w-full" aria-hidden />
 
-      <div className="relative mx-auto grid max-w-page gap-12 px-4 sm:px-6 lg:grid-cols-2 lg:items-center lg:gap-10 lg:px-10">
+      <div className="relative mx-auto grid max-w-pageWide gap-12 px-4 sm:px-6 lg:grid-cols-2 lg:items-center lg:gap-10 lg:px-10">
         <Reveal>
-          <span className="text-xs font-semibold uppercase tracking-[0.14em] text-emerald-400">
+          <span className="text-xs font-semibold uppercase tracking-[0.14em] text-algtrix-accent">
             {product.eyebrow}
           </span>
-          <h1 className="mt-4 text-4xl font-bold leading-[1.08] tracking-tight text-white sm:text-5xl lg:text-[3.4rem]">
+          <h1 className="mt-4 font-sans text-4xl font-semibold leading-[1.1] tracking-tight text-algtrix-text sm:text-5xl lg:text-[3.25rem]">
             Encontre as empresas certas para o seu próximo negócio.
           </h1>
-          <p className="mt-5 max-w-[46ch] text-base leading-relaxed text-white/70 sm:text-lg">
-            Dados empresariais estruturados para segmentar mercados e acelerar sua prospecção B2B.
+          <p className="mt-5 max-w-[48ch] text-base leading-relaxed text-algtrix-muted sm:text-lg">
+            Dados empresariais estruturados para segmentar mercados, construir listas comerciais e acelerar sua
+            prospecção B2B.
           </p>
 
           <div className="mt-8 flex flex-col gap-3 sm:flex-row">
@@ -46,7 +45,6 @@ export function Hero() {
             <Button
               variant="secondary"
               size="lg"
-              className="border-white/15 bg-white/5 text-white hover:border-white/30 hover:bg-white/10"
               onClick={() => {
                 document.getElementById('demonstracao')?.scrollIntoView({ behavior: 'smooth' })
               }}
@@ -57,7 +55,7 @@ export function Hero() {
         </Reveal>
 
         <Reveal delay={0.1}>
-          <DataExplorerPanel variant="hero" />
+          <DataExplorerPanel variant="preview" />
         </Reveal>
       </div>
     </section>

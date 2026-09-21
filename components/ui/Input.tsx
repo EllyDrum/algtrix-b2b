@@ -11,15 +11,15 @@ export function Field({ label, error, helperText, id, className, ...rest }: Fiel
   const fieldId = id ?? label.toLowerCase().replace(/\s+/g, '-')
   return (
     <div className="flex flex-col gap-1.5">
-      <label htmlFor={fieldId} className="text-sm font-medium text-ink-primary">
+      <label htmlFor={fieldId} className="text-sm font-medium text-algtrix-text">
         {label}
       </label>
       <input
         id={fieldId}
         className={cn(
-          'rounded-sm border bg-white px-3.5 py-2.5 text-sm text-ink-primary placeholder:text-ink-secondary/60',
-          'focus:outline-none focus:ring-2 focus:ring-accent/40 focus:border-accent',
-          error ? 'border-red-400' : 'border-border',
+          'rounded-md border bg-black/[0.045] px-3.5 py-2.5 text-sm text-algtrix-text placeholder:text-algtrix-dim',
+          'focus:outline-none focus:ring-2 focus:ring-algtrix-accent/40 focus:border-algtrix-accent',
+          error ? 'border-algtrix-risk' : 'border-algtrix-border',
           className,
         )}
         aria-invalid={Boolean(error)}
@@ -27,12 +27,12 @@ export function Field({ label, error, helperText, id, className, ...rest }: Fiel
         {...rest}
       />
       {helperText && !error && (
-        <span id={`${fieldId}-helper`} className="text-xs text-ink-secondary">
+        <span id={`${fieldId}-helper`} className="text-xs text-algtrix-muted">
           {helperText}
         </span>
       )}
       {error && (
-        <span id={`${fieldId}-error`} className="text-xs font-medium text-red-600">
+        <span id={`${fieldId}-error`} className="text-xs font-medium text-algtrix-risk">
           {error}
         </span>
       )}
@@ -50,14 +50,15 @@ export function SelectField({
   const fieldId = id ?? label.toLowerCase().replace(/\s+/g, '-')
   return (
     <div className="flex flex-col gap-1.5">
-      <label htmlFor={fieldId} className="text-sm font-medium text-ink-primary">
+      <label htmlFor={fieldId} className="text-sm font-medium text-algtrix-text">
         {label}
       </label>
       <select
         id={fieldId}
         className={cn(
-          'rounded-sm border border-border bg-white px-3.5 py-2.5 text-sm text-ink-primary',
-          'focus:outline-none focus:ring-2 focus:ring-accent/40 focus:border-accent',
+          'rounded-md border border-algtrix-border bg-black/[0.045] px-3.5 py-2.5 text-sm text-algtrix-text',
+          'focus:outline-none focus:ring-2 focus:ring-algtrix-accent/40 focus:border-algtrix-accent',
+          '[&>option]:bg-algtrix-surface2',
           className,
         )}
         {...rest}

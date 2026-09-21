@@ -10,10 +10,7 @@ import { DataSample } from '@/sections/DataSample'
 import { Segments } from '@/sections/Segments'
 import { WhyAlgtrix } from '@/sections/WhyAlgtrix'
 import { Comparison } from '@/sections/Comparison'
-import { Offer } from '@/sections/Offer'
 import { Pricing } from '@/sections/Pricing'
-import { ObjectionsMicro } from '@/sections/ObjectionsMicro'
-import { Guarantee } from '@/sections/Guarantee'
 import { FAQ } from '@/sections/FAQ'
 import { FinalCTA } from '@/sections/FinalCTA'
 import { Footer } from '@/sections/Footer'
@@ -36,10 +33,7 @@ export default function HomePage() {
         <Segments />
         <WhyAlgtrix />
         <Comparison />
-        <Offer />
         <Pricing />
-        <ObjectionsMicro />
-        <Guarantee />
         <FAQ />
         <FinalCTA />
       </main>

@@ -1,18 +1,25 @@
 import type { Metadata } from 'next'
-import { Plus_Jakarta_Sans, IBM_Plex_Mono } from 'next/font/google'
+import { Sora, Manrope, JetBrains_Mono } from 'next/font/google'
 import { brand } from '@/config/brand'
 import { product } from '@/config/product'
 import { LeadModalProvider } from '@/components/LeadModalContext'
 import './globals.css'
 
-const display = Plus_Jakarta_Sans({
+const display = Sora({
   subsets: ['latin'],
   variable: '--font-display',
   display: 'swap',
-  weight: ['400', '500', '600', '700', '800'],
+  weight: ['300', '400', '500', '600', '700'],
 })
 
-const mono = IBM_Plex_Mono({
+const body = Manrope({
+  subsets: ['latin'],
+  variable: '--font-body',
+  display: 'swap',
+  weight: ['400', '500', '600', '700'],
+})
+
+const mono = JetBrains_Mono({
   subsets: ['latin'],
   variable: '--font-mono',
   display: 'swap',
@@ -53,8 +60,8 @@ const jsonLd = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="pt-BR" className={`${display.variable} ${mono.variable}`}>
-      <body id="top" className="font-sans">
+    <html lang="pt-BR" className={`${display.variable} ${body.variable} ${mono.variable}`}>
+      <body id="top" className="bg-algtrix-bg font-body text-algtrix-text">
         <script
           type="application/ld+json"
           // eslint-disable-next-line react/no-danger

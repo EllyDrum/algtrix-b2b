@@ -10,9 +10,9 @@ export function Badge({
   className?: string
 }) {
   const tones: Record<string, string> = {
-    neutral: 'bg-zinc-100 text-ink-secondary',
-    accent: 'bg-accent/10 text-accent-hover',
-    dark: 'bg-white/10 text-white',
+    neutral: 'bg-black/[0.05] text-algtrix-muted border border-algtrix-border',
+    accent: 'bg-algtrix-accentSoft text-algtrix-accent border border-algtrix-borderAccent',
+    dark: 'bg-algtrix-surface2 text-algtrix-text border border-algtrix-border',
   }
   return (
     <span

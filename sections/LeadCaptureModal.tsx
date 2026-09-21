@@ -107,7 +107,7 @@ export function LeadCaptureModal({
           </SelectField>
 
           {status === 'error' && (
-            <p className="text-sm font-medium text-red-600">
+            <p className="text-sm font-medium text-algtrix-risk">
               Não foi possível enviar agora. Tente novamente em alguns instantes.
             </p>
           )}

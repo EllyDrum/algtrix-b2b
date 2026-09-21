@@ -1,10 +1,10 @@
 'use client'
 
+import { useEffect, useRef } from 'react'
 import { Reveal } from '@/components/ui/Reveal'
 import { DataExplorerPanel } from '@/components/DataExplorerPanel'
 import { track } from '@/lib/analytics'
 import { AnalyticsEvent } from '@/config/analytics'
-import { useEffect, useRef } from 'react'
 
 export function DemoSection() {
   const started = useRef(false)
@@ -27,13 +27,13 @@ export function DemoSection() {
   }, [])
 
   return (
-    <section id="demonstracao" ref={sectionRef} className="bg-zinc-50 py-20 sm:py-24">
-      <div className="mx-auto max-w-page px-4 sm:px-6 lg:px-10">
+    <section id="demonstracao" ref={sectionRef} className="bg-algtrix-surface py-20 sm:py-24">
+      <div className="mx-auto max-w-pageWide px-4 sm:px-6 lg:px-10">
         <Reveal>
-          <h2 className="max-w-[24ch] text-3xl font-bold leading-tight tracking-tight text-ink-primary sm:text-4xl">
+          <h2 className="max-w-[24ch] font-sans text-3xl font-semibold leading-tight tracking-tight text-algtrix-text sm:text-4xl">
             Não imagine. Veja como funciona.
           </h2>
-          <p className="mt-3 max-w-[52ch] text-[15px] leading-relaxed text-ink-secondary">
+          <p className="mt-3 max-w-[52ch] text-[15px] leading-relaxed text-algtrix-muted">
             Ajuste os filtros abaixo como faria com a base real e veja a interface responder.
           </p>
         </Reveal>

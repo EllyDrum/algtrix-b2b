@@ -13,11 +13,11 @@ interface CommonProps {
 }
 
 const variantClasses: Record<Variant, string> = {
-  primary:
-    'bg-accent text-white hover:bg-accent-hover shadow-[0_10px_30px_-8px_rgba(5,150,105,0.45)]',
-  secondary: 'bg-white text-brand-primary border border-border hover:border-brand-primary/40',
-  ghost: 'bg-transparent text-brand-primary hover:bg-brand-primary/5',
-  inverse: 'bg-white text-brand-dark hover:bg-white/90',
+  primary: 'bg-algtrix-accent text-algtrix-bg hover:bg-algtrix-accentHover shadow-glow',
+  secondary:
+    'bg-transparent text-algtrix-text border border-algtrix-borderStrong hover:border-algtrix-accent/50 hover:bg-black/[0.03]',
+  ghost: 'bg-transparent text-algtrix-muted hover:text-algtrix-text hover:bg-black/[0.04]',
+  inverse: 'bg-algtrix-text text-algtrix-bg hover:bg-algtrix-violet',
 }
 
 const sizeClasses: Record<Size, string> = {
@@ -26,7 +26,7 @@ const sizeClasses: Record<Size, string> = {
 }
 
 const base =
-  'inline-flex items-center justify-center gap-2 rounded-full font-semibold leading-none whitespace-nowrap transition-all duration-200 active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/50 focus-visible:ring-offset-2'
+  'inline-flex items-center justify-center gap-2 rounded-md font-semibold leading-none whitespace-nowrap transition-all duration-200 active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-algtrix-accent/50 focus-visible:ring-offset-2 focus-visible:ring-offset-algtrix-bg disabled:opacity-50 disabled:pointer-events-none'
 
 export function Button({
   variant = 'primary',

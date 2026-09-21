@@ -1,8 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { brand } from '@/config/brand'
-import { product } from '@/config/product'
+import { Logo } from '@/components/Logo'
 import { ButtonLink } from '@/components/ui/Button'
 import { cn } from '@/lib/utils'
 import { track } from '@/lib/analytics'
@@ -11,7 +10,7 @@ import { AnalyticsEvent } from '@/config/analytics'
 const LINKS = [
   { href: '#produto', label: 'Produto' },
   { href: '#demonstracao', label: 'Como funciona' },
-  { href: '#oferta', label: 'Preço' },
+  { href: '#dados', label: 'Dados' },
   { href: '#faq', label: 'FAQ' },
 ]
 
@@ -21,10 +20,13 @@ export function Navbar() {
   useEffect(() => {
     const target = document.getElementById('hero-sentinel')
     if (!target) return
-    const observer = new IntersectionObserver((entries) => {
-      const entry = entries[0]
-      if (entry) setScrolled(!entry.isIntersecting)
-    }, { threshold: 0 })
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const entry = entries[0]
+        if (entry) setScrolled(!entry.isIntersecting)
+      },
+      { threshold: 0 },
+    )
     observer.observe(target)
     return () => observer.disconnect()
   }, [])
@@ -32,21 +34,24 @@ export function Navbar() {
   return (
     <header
       className={cn(
-        'sticky top-0 z-40 h-[68px] border-b transition-colors duration-200',
-        scrolled ? 'border-border bg-white/95 backdrop-blur' : 'border-transparent bg-white/0',
+        'sticky top-0 z-40 h-[72px] border-b transition-[background-color,border-color,backdrop-filter] duration-[250ms]',
+        scrolled
+          ? 'border-algtrix-border bg-algtrix-bg/85 backdrop-blur-md shadow-[0_1px_12px_rgba(24,18,43,0.06)]'
+          : 'border-transparent bg-transparent',
       )}
     >
-      <div className="mx-auto flex h-full max-w-page items-center justify-between gap-6 px-4 sm:px-6 lg:px-10">
-        <a href="#top" className="flex items-center gap-2">
-          <span className="text-[15px] font-bold tracking-tight text-brand-primary">{brand.name}</span>
-          <span className="rounded-full bg-brand-primary/8 px-2 py-0.5 text-[11px] font-semibold text-brand-primary">
-            {product.name}
-          </span>
+      <div className="mx-auto flex h-full max-w-pageWide items-center justify-between gap-6 px-4 sm:px-6 lg:px-10">
+        <a href="#top" className="flex items-center">
+          <Logo />
         </a>
 
-        <nav className="hidden items-center gap-7 lg:flex">
+        <nav className="hidden items-center gap-8 lg:flex">
           {LINKS.map((link) => (
-            <a key={link.href} href={link.href} className="text-sm font-medium text-ink-secondary hover:text-ink-primary">
+            <a
+              key={link.href}
+              href={link.href}
+              className="text-sm font-medium text-algtrix-muted transition-colors hover:text-algtrix-text"
+            >
               {link.label}
             </a>
           ))}

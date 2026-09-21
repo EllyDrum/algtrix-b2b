@@ -3,33 +3,35 @@ import { product } from '@/config/product'
 
 export function Filters() {
   return (
-    <section className="bg-white py-20 sm:py-24">
-      <div className="mx-auto max-w-page px-4 sm:px-6 lg:px-10">
+    <section className="bg-algtrix-surface py-20 sm:py-24">
+      <div className="mx-auto max-w-pageWide px-4 sm:px-6 lg:px-10">
         <Reveal>
-          <h2 className="max-w-[26ch] text-3xl font-bold leading-tight tracking-tight text-ink-primary sm:text-4xl">
+          <h2 className="max-w-[26ch] font-sans text-3xl font-semibold leading-tight tracking-tight text-algtrix-text sm:text-4xl">
             Encontre empresas pelo perfil que você procura.
           </h2>
         </Reveal>
 
-        <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-5">
-          {product.filters.map((group, index) => (
-            <Reveal key={group.group} delay={index * 0.04}>
-              <div className="h-full rounded-lg border border-border p-5">
-                <p className="text-xs font-semibold uppercase tracking-wide text-ink-secondary">{group.group}</p>
-                <div className="mt-3 flex flex-wrap gap-2">
+        <Reveal delay={0.08} className="mt-10">
+          <div className="divide-y divide-algtrix-border overflow-hidden rounded-lg border border-algtrix-border bg-algtrix-bg">
+            {product.filters.map((group) => (
+              <div key={group.group} className="grid gap-3 p-5 sm:grid-cols-[160px_1fr] sm:items-center sm:gap-6">
+                <p className="font-mono text-xs font-semibold uppercase tracking-wide text-algtrix-dim">
+                  {group.group}
+                </p>
+                <div className="flex flex-wrap gap-2">
                   {group.fields.map((field) => (
                     <span
                       key={field}
-                      className="rounded-full border border-border bg-zinc-50 px-3 py-1 text-xs font-medium text-ink-primary"
+                      className="rounded-full border border-algtrix-border bg-black/[0.04] px-3.5 py-1.5 text-xs font-medium text-algtrix-text"
                     >
                       {field}
                     </span>
                   ))}
                 </div>
               </div>
-            </Reveal>
-          ))}
-        </div>
+            ))}
+          </div>
+        </Reveal>
       </div>
     </section>
   )

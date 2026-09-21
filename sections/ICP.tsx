@@ -1,5 +1,6 @@
 'use client'
 
+import { ArrowRight } from '@phosphor-icons/react/dist/ssr/ArrowRight'
 import { Reveal } from '@/components/ui/Reveal'
 import { Button } from '@/components/ui/Button'
 import { useLeadModal } from '@/components/LeadModalContext'
@@ -10,32 +11,39 @@ export function ICP() {
   const { openLead } = useLeadModal()
 
   return (
-    <section className="bg-white py-20 sm:py-24">
-      <div className="mx-auto max-w-page px-4 sm:px-6 lg:px-10">
+    <section className="bg-algtrix-bg py-20 sm:py-24">
+      <div className="mx-auto max-w-pageWide px-4 sm:px-6 lg:px-10">
         <Reveal className="text-center">
-          <h2 className="mx-auto max-w-[24ch] text-3xl font-bold leading-tight tracking-tight text-ink-primary sm:text-4xl">
+          <h2 className="mx-auto max-w-[24ch] font-sans text-3xl font-semibold leading-tight tracking-tight text-algtrix-text sm:text-4xl">
             Comece pelo seu cliente ideal.
           </h2>
         </Reveal>
 
         <Reveal delay={0.08}>
-          <div className="mx-auto mt-10 flex max-w-3xl flex-wrap items-center justify-center gap-3 text-center">
-            {PARTS.map((part, index) => (
-              <div key={part} className="flex items-center gap-3">
-                <span className="rounded-lg border border-border bg-zinc-50 px-4 py-3 text-sm font-semibold text-ink-primary">
+          <div className="relative mx-auto mt-14 max-w-4xl">
+            <div
+              className="absolute left-0 right-0 top-1/2 hidden h-px -translate-y-1/2 bg-gradient-to-r from-transparent via-algtrix-borderAccent to-algtrix-borderAccent sm:block"
+              aria-hidden
+            />
+            <div className="relative flex flex-wrap items-center justify-center gap-4 sm:flex-nowrap sm:justify-between">
+              {PARTS.map((part) => (
+                <span
+                  key={part}
+                  className="relative rounded-md border border-algtrix-border bg-algtrix-surface px-4 py-3 text-sm font-semibold text-algtrix-text"
+                >
                   {part}
                 </span>
-                {index < PARTS.length - 1 && <span className="text-lg font-semibold text-ink-secondary/50">+</span>}
-              </div>
-            ))}
-            <span className="text-lg font-semibold text-ink-secondary/50">=</span>
-            <span className="rounded-lg bg-brand-primary px-4 py-3 text-sm font-semibold text-white">
-              Mercado alvo
-            </span>
+              ))}
+              <ArrowRight size={18} className="hidden shrink-0 text-algtrix-accent sm:block" />
+              <span className="relative flex items-center gap-2 rounded-md border border-algtrix-borderAccent bg-algtrix-accentSoft px-5 py-3.5 text-sm font-semibold text-algtrix-text shadow-glow">
+                <span className="h-1.5 w-1.5 animate-pulse-dot rounded-full bg-algtrix-accent" aria-hidden />
+                Mercado-alvo
+              </span>
+            </div>
           </div>
         </Reveal>
 
-        <Reveal delay={0.14} className="mt-9 flex justify-center">
+        <Reveal delay={0.14} className="mt-10 flex justify-center">
           <Button onClick={() => openLead('icp')}>Quero encontrar meu mercado</Button>
         </Reveal>
       </div>

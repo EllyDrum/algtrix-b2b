@@ -14,8 +14,8 @@ export function Card({
       className={cn(
         'rounded-lg border p-6',
         tone === 'light'
-          ? 'border-border bg-white shadow-card'
-          : 'border-white/10 bg-white/[0.04] shadow-card-dark',
+          ? 'border-algtrix-border bg-algtrix-surface shadow-card'
+          : 'border-algtrix-border bg-black/[0.04] shadow-card-dark',
         className,
       )}
     >
