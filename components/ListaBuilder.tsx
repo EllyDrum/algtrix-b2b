@@ -684,7 +684,7 @@ function BuscaCidade({
             aria-expanded={aberto}
             aria-controls="lista-cidades"
             aria-autocomplete="list"
-            className="field pl-9"
+            className="field !pl-10"
           />
           {aberto && lista.length > 0 && (
             <ul
