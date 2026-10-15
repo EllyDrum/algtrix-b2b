@@ -1,115 +1,107 @@
 'use client'
 
-import { useState } from 'react'
 import { CheckCircle } from '@phosphor-icons/react/dist/ssr/CheckCircle'
-import { ShieldCheck } from '@phosphor-icons/react/dist/ssr/ShieldCheck'
-import { LockKey } from '@phosphor-icons/react/dist/ssr/LockKey'
 import { Reveal } from '@/components/ui/Reveal'
-import { Button } from '@/components/ui/Button'
-import { pricing, PRICING_IS_PLACEHOLDER } from '@/config/pricing'
+import { ButtonLink } from '@/components/ui/Button'
 import { product } from '@/config/product'
-import { formatCentsToBRL } from '@/lib/utils'
+import { COMPETENCIA, TOTAL_EMPRESAS } from '@/lib/catalog'
+import { DESCONTOS_CARRINHO, formatarBRL, formatarNumero, precoPorQuantidade } from '@/lib/pricing-engine'
 import { track } from '@/lib/analytics'
 import { AnalyticsEvent } from '@/config/analytics'
-import { useLeadModal } from '@/components/LeadModalContext'
+
+const EXEMPLOS = [2_000, 5_000, 10_000, 50_000, 100_000, 250_000, 1_000_000]
+
+const INCLUIDO = [
+  'Lista exata do recorte escolhido: estado ou cidade, segmentos e porte',
+  'Arquivo ZIP com CSV e Excel (até 100 mil empresas)',
+  'CNPJ, razão social, CNAE, porte, endereço, telefones e e-mail',
+  'Download imediato após Pix ou cartão aprovado',
+  'Link de download permanente na página do pedido e por e-mail',
+]
 
 const DETAILS = [
   { label: 'Formato', value: product.deliverable.formats.join(' e ') },
   { label: 'Atualização', value: product.deliverable.updateFrequency },
-  { label: 'Cobertura', value: product.deliverable.coverage },
-  { label: 'Entrega', value: 'Digital' },
+  { label: 'Cobertura', value: `${formatarNumero(TOTAL_EMPRESAS)} empresas ativas` },
+  { label: 'Pagamento', value: 'Pix ou cartão, sem assinatura' },
 ]
 
 export function Pricing() {
-  const { openLead } = useLeadModal()
-  const [status, setStatus] = useState<'idle' | 'loading'>('idle')
-  const priceLabel = formatCentsToBRL(pricing.priceCents) ?? pricing.displayPrice
-  const installmentLabel =
-    pricing.installments.max && pricing.installments.installmentValueCents
-      ? `em até ${pricing.installments.max}x de ${formatCentsToBRL(pricing.installments.installmentValueCents)}`
-      : null
-
-  async function handleBuy() {
-    track(AnalyticsEvent.CheckoutStarted, {})
-
-    if (PRICING_IS_PLACEHOLDER) {
-      // Sem preço real definido ainda: direciona para captura de lead em
-      // vez de simular uma compra com valor inventado.
-      openLead('sticky_cta')
-      return
-    }
-
-    setStatus('loading')
-    try {
-      const response = await fetch('/api/checkout', { method: 'POST' })
-      const data = await response.json()
-      if (data.checkoutUrl) window.location.href = data.checkoutUrl
-    } finally {
-      setStatus('idle')
-    }
-  }
-
   return (
     <section id="oferta" className="bg-algtrix-surface py-20 sm:py-24">
       <div className="mx-auto max-w-pageWide px-4 sm:px-6 lg:px-10">
         <Reveal>
           <h2 className="max-w-[26ch] font-sans text-3xl font-semibold leading-tight tracking-tight text-algtrix-text sm:text-4xl">
-            Acesse a base agora.
+            Pague só pelo recorte que você precisa.
           </h2>
+          <p className="mt-3 max-w-[60ch] text-algtrix-muted">
+            A partir de {formatarBRL(1990)}, sem mensalidade. O preço por empresa cai conforme o volume, e o valor
+            exato aparece antes do pagamento.
+          </p>
         </Reveal>
 
         <div className="mt-10 grid gap-10 lg:grid-cols-2 lg:items-start">
-          <Reveal delay={0.05} className="order-2 lg:order-1">
-            <p className="text-sm font-semibold uppercase tracking-wide text-algtrix-dim">O que está incluído</p>
-            <ul className="mt-4 space-y-3">
-              {pricing.included.map((item) => (
-                <li key={item} className="flex items-start gap-3 text-[15px] text-algtrix-text">
-                  <CheckCircle size={18} weight="fill" className="mt-0.5 shrink-0 text-algtrix-accent" />
-                  {item}
-                </li>
-              ))}
-            </ul>
-
-            <div className="mt-8 grid grid-cols-2 gap-4">
-              {DETAILS.map((detail) => (
-                <div key={detail.label} className="rounded-lg border border-algtrix-border bg-algtrix-bg p-4">
-                  <p className="text-xs font-medium uppercase tracking-wide text-algtrix-dim">{detail.label}</p>
-                  <p className="mt-1.5 text-sm font-semibold text-algtrix-text">{detail.value}</p>
-                </div>
-              ))}
+          <Reveal delay={0.05}>
+            <div className="overflow-hidden rounded-lg border border-algtrix-border bg-algtrix-bg">
+              <table className="w-full text-left text-sm">
+                <thead>
+                  <tr className="bg-algtrix-surface2 text-algtrix-dim">
+                    <th className="px-5 py-3 font-semibold">Empresas no recorte</th>
+                    <th className="px-5 py-3 text-right font-semibold">Preço</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {EXEMPLOS.map((n) => (
+                    <tr key={n} className="border-t border-algtrix-border">
+                      <td className="px-5 py-3 text-algtrix-text">{n === 2_000 ? 'Até 2.000' : formatarNumero(n)}</td>
+                      <td className="px-5 py-3 text-right font-semibold text-algtrix-text">
+                        {formatarBRL(precoPorQuantidade(n))}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
             </div>
+            <p className="mt-4 text-sm text-algtrix-muted">
+              Desconto automático no carrinho:{' '}
+              {[...DESCONTOS_CARRINHO]
+                .reverse()
+                .map((d) => `${d.percentual}% com ${d.minItens}${d.minItens === 5 ? ' ou mais' : ''} recortes`)
+                .join(', ')}
+              .
+            </p>
           </Reveal>
 
-          <Reveal delay={0.1} className="order-1 lg:order-2">
-            <div className="rounded-lg border-2 border-algtrix-accent bg-algtrix-bg p-8 text-center shadow-glow">
-              {PRICING_IS_PLACEHOLDER && (
-                <p className="mb-4 inline-flex rounded-full border border-algtrix-amber/40 bg-algtrix-amber/10 px-3 py-1.5 text-xs font-semibold text-algtrix-amber">
-                  Preço em definição, fale com a equipe
-                </p>
-              )}
-              <p className="font-mono text-4xl font-semibold tracking-tight text-algtrix-text">{priceLabel}</p>
-              {installmentLabel && <p className="mt-1.5 text-sm text-algtrix-muted">{installmentLabel}</p>}
-              {pricing.savingsClaim && (
-                <p className="mt-2 text-sm font-medium text-algtrix-accent">{pricing.savingsClaim}</p>
-              )}
-
-              <Button size="lg" className="mt-7 w-full" onClick={handleBuy} disabled={status === 'loading'}>
-                {status === 'loading' ? 'Abrindo checkout...' : 'Comprar agora'}
-              </Button>
-
-              <div className="mt-5 border-t border-algtrix-border pt-5">
-                {pricing.guarantee.enabled ? (
-                  <p className="flex items-center justify-center gap-1.5 text-xs text-algtrix-muted">
-                    <ShieldCheck size={14} className="text-algtrix-accent" />
-                    Garantia de {pricing.guarantee.days} dias{pricing.guarantee.description ? ` · ${pricing.guarantee.description}` : ''}
-                  </p>
-                ) : (
-                  <p className="flex items-center justify-center gap-1.5 text-xs text-algtrix-muted">
-                    <LockKey size={14} className="text-algtrix-dim" />
-                    Compra segura, dados protegidos e uso conforme a LGPD.
-                  </p>
-                )}
+          <Reveal delay={0.1}>
+            <div className="rounded-lg border-2 border-algtrix-accent bg-algtrix-bg p-7 shadow-glow">
+              <p className="text-sm font-semibold uppercase tracking-wide text-algtrix-dim">O que está incluído</p>
+              <ul className="mt-4 space-y-3">
+                {INCLUIDO.map((item) => (
+                  <li key={item} className="flex items-start gap-3 text-[15px] text-algtrix-text">
+                    <CheckCircle size={18} weight="fill" className="mt-0.5 shrink-0 text-algtrix-accent" />
+                    {item}
+                  </li>
+                ))}
+              </ul>
+              <div className="mt-6 grid grid-cols-2 gap-3">
+                {DETAILS.map((detail) => (
+                  <div key={detail.label} className="rounded-md border border-algtrix-border bg-algtrix-surface p-3">
+                    <p className="text-[11px] font-medium uppercase tracking-wide text-algtrix-dim">{detail.label}</p>
+                    <p className="mt-1 text-sm font-semibold text-algtrix-text">{detail.value}</p>
+                  </div>
+                ))}
               </div>
+              <ButtonLink
+                href="/montar-lista"
+                size="lg"
+                className="mt-7 w-full"
+                onClick={() => track(AnalyticsEvent.CheckoutStarted, { placement: 'pricing' })}
+              >
+                Montar minha lista
+              </ButtonLink>
+              <p className="mt-3 text-center text-xs text-algtrix-dim">
+                Fonte: Dados Abertos do CNPJ, Receita Federal. Competência {COMPETENCIA}.
+              </p>
             </div>
           </Reveal>
         </div>

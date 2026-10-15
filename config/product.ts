@@ -11,16 +11,15 @@ export const product = {
   deliverable: {
     // TODO(Elli): confirmar formato final de entrega (Excel, CSV, acesso via plataforma, etc.)
     formats: ['Excel (.xlsx)', 'CSV'],
-    updateFrequency: 'A definir', // TODO(Elli): confirmar periodicidade real de atualização
-    coverage: 'Nacional', // TODO(Elli): confirmar cobertura geográfica exata
+    updateFrequency: 'Mensal (base atual: competência 2026-09)',
+    coverage: 'Nacional, 27 UFs',
   },
   demoDisclaimer: 'Demonstração ilustrativa. Os dados exibidos abaixo são fictícios.',
   filters: [
-    { group: 'Localização', fields: ['Estado', 'Cidade', 'Região', 'CEP'] },
-    { group: 'Atividade', fields: ['CNAE', 'Atividade principal', 'Atividades secundárias'] },
-    { group: 'Empresa', fields: ['Porte', 'Natureza jurídica', 'Matriz', 'Filial'] },
-    { group: 'Situação', fields: ['Situação cadastral', 'MEI', 'Simples Nacional'] },
-    { group: 'Estrutura', fields: ['Capital social', 'Data de abertura'] },
+    { group: 'Localização', fields: ['Estado (27 UFs)', 'Cidade (5.572 municípios)'] },
+    { group: 'Atividade', fields: ['Segmento (21 seções da CNAE)', 'CNAE principal e secundários no arquivo'] },
+    { group: 'Empresa', fields: ['Porte: ME, EPP e Demais', 'Incluir ou excluir MEI'] },
+    { group: 'Situação', fields: ['Somente empresas ativas'] },
   ],
   dataFields: [
     'CNPJ',
@@ -34,11 +33,10 @@ export const product = {
     'Cidade',
     'UF',
     'CEP',
-    'Telefone',
-    'Celular',
+    'Endereço completo',
+    'Data de abertura',
+    'Telefone 1 e 2',
     'E-mail',
-    'Sócio',
-    'Cargo',
   ],
   segments: [
     'Tecnologia',

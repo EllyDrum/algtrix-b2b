@@ -22,7 +22,7 @@ export function StickyCTA() {
 
   function handleClick() {
     track(AnalyticsEvent.StickyCtaClick, {})
-    document.getElementById('oferta')?.scrollIntoView({ behavior: 'smooth' })
+    window.location.href = '/montar-lista'
   }
 
   return (
@@ -36,10 +36,10 @@ export function StickyCTA() {
           className="fixed inset-x-0 bottom-0 z-30 border-t border-algtrix-border bg-algtrix-surface/95 backdrop-blur sm:bottom-4 sm:inset-x-4 sm:rounded-md sm:border sm:shadow-card lg:inset-x-auto lg:bottom-6 lg:right-6 lg:w-auto"
         >
           <div className="flex h-[56px] items-center justify-between gap-4 px-4 sm:h-[60px] sm:px-5 lg:gap-6">
-            <span className="hidden text-sm font-semibold text-algtrix-text lg:block">Acesse a base agora</span>
-            <span className="text-sm font-medium text-algtrix-muted lg:hidden">Acesse a base</span>
+            <span className="hidden text-sm font-semibold text-algtrix-text lg:block">Listas a partir de R$ 19,90</span>
+            <span className="text-sm font-medium text-algtrix-muted lg:hidden">A partir de R$ 19,90</span>
             <Button size="md" onClick={handleClick} className="shrink-0">
-              Quero acessar a base
+              Montar minha lista
             </Button>
           </div>
         </motion.div>

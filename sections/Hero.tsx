@@ -30,17 +30,17 @@ export function Hero() {
             Encontre as empresas certas para o seu próximo negócio.
           </h1>
           <p className="mt-5 max-w-[48ch] text-base leading-relaxed text-algtrix-muted sm:text-lg">
-            Dados empresariais estruturados para segmentar mercados, construir listas comerciais e acelerar sua
-            prospecção B2B.
+            Escolha o estado ou a cidade, o segmento e o porte. Veja quantas empresas e quanto custa antes de pagar. Listas a partir
+            de R$ 19,90, sem assinatura, com download imediato.
           </p>
 
           <div className="mt-8 flex flex-col gap-3 sm:flex-row">
             <ButtonLink
-              href="#oferta"
+              href="/montar-lista"
               size="lg"
               onClick={() => track(AnalyticsEvent.HeroCta, { placement: 'hero_primary' })}
             >
-              Quero acessar a base
+              Montar minha lista
             </ButtonLink>
             <Button
               variant="secondary"

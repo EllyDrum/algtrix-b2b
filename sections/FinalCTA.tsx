@@ -12,8 +12,8 @@ export function FinalCTA() {
           Comece a encontrar as empresas certas hoje.
         </h2>
         <div className="mt-8 flex justify-center">
-          <ButtonLink href="#oferta" size="lg" onClick={() => track(AnalyticsEvent.HeroCta, { placement: 'final_cta' })}>
-            Quero acessar a base
+          <ButtonLink href="/montar-lista" size="lg" onClick={() => track(AnalyticsEvent.HeroCta, { placement: 'final_cta' })}>
+            Montar minha lista
           </ButtonLink>
         </div>
       </div>

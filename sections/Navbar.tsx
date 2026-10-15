@@ -8,10 +8,10 @@ import { track } from '@/lib/analytics'
 import { AnalyticsEvent } from '@/config/analytics'
 
 const LINKS = [
-  { href: '#produto', label: 'Produto' },
-  { href: '#demonstracao', label: 'Como funciona' },
-  { href: '#dados', label: 'Dados' },
-  { href: '#faq', label: 'FAQ' },
+  { href: '/#produto', label: 'Produto' },
+  { href: '/#demonstracao', label: 'Como funciona' },
+  { href: '/#oferta', label: 'Preços' },
+  { href: '/#faq', label: 'FAQ' },
 ]
 
 export function Navbar() {
@@ -19,7 +19,11 @@ export function Navbar() {
 
   useEffect(() => {
     const target = document.getElementById('hero-sentinel')
-    if (!target) return
+    if (!target) {
+      // Páginas internas (sem o Hero): cabeçalho sempre sólido.
+      setScrolled(true)
+      return
+    }
     const observer = new IntersectionObserver(
       (entries) => {
         const entry = entries[0]
@@ -41,7 +45,7 @@ export function Navbar() {
       )}
     >
       <div className="mx-auto flex h-full max-w-pageWide items-center justify-between gap-6 px-4 sm:px-6 lg:px-10">
-        <a href="#top" className="flex items-center">
+        <a href="/" className="flex items-center">
           <Logo />
         </a>
 
@@ -58,11 +62,11 @@ export function Navbar() {
         </nav>
 
         <ButtonLink
-          href="#oferta"
+          href="/montar-lista"
           size="md"
           onClick={() => track(AnalyticsEvent.HeroCta, { placement: 'navbar' })}
         >
-          Quero acessar a base
+          Montar minha lista
         </ButtonLink>
       </div>
     </header>

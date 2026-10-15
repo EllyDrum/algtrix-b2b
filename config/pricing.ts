@@ -14,7 +14,7 @@
  * NUNCA deve ser confiado a partir do cliente.
  */
 
-export const PRICING_IS_PLACEHOLDER = true
+export const PRICING_IS_PLACEHOLDER = false
 
 export const pricing = {
   currency: 'BRL',

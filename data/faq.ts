@@ -8,32 +8,37 @@ export const faqItems: FaqItem[] = [
   {
     question: 'O que estou comprando, exatamente?',
     answer:
-      'Acesso a uma base de dados empresariais estruturada, filtrável por critérios como localização, segmento, porte e situação cadastral, entregue em formato digital para uso em prospecção comercial.',
+      'Uma lista de empresas ativas no recorte que você escolhe (estado ou cidade, segmentos e porte; por exemplo, empresas de saúde em Guarulhos), com dados da Receita Federal, pronta para prospecção. Você vê a quantidade exata e o preço antes de pagar, a partir de R$ 19,90.',
   },
   {
     question: 'O que está incluído na oferta?',
     answer:
-      'Os itens exatos incluídos na entrega estão descritos na seção "O que está incluído", acima da oferta. Essa lista é a fonte de verdade sobre o que você recebe.',
+      'Cada recorte que você monta (estado ou cidade, segmentos, porte e opção de MEI) vira um arquivo ZIP com a lista em CSV, a mesma lista em Excel (até 100 mil empresas) e um arquivo LEIA-ME com a data da base.',
   },
   {
     question: 'Quais dados estão disponíveis?',
     answer:
-      'Informações estruturadas de empresas, como CNPJ, razão social, nome fantasia, CNAE, porte, natureza jurídica, capital social, localização e dados de contato disponíveis publicamente, conforme os campos apresentados na seção de amostra.',
+      'CNPJ, razão social, nome fantasia, data de abertura, CNAE principal e secundários, segmento, natureza jurídica, porte, indicação de MEI, capital social, endereço completo, telefones e e-mail, conforme os Dados Abertos do CNPJ da Receita Federal. A base não inclui o quadro de sócios. A amostra exibida no site é ilustrativa.',
   },
   {
     question: 'Qual é o formato dos arquivos?',
     answer:
-      'Os formatos de entrega estão detalhados na seção da oferta. Eles são pensados para uso direto em planilhas e ferramentas de prospecção, sem exigir conhecimento técnico.',
+      'CSV separado por ponto e vírgula (abre direto no Excel) e XLSX para recortes de até 100 mil empresas, dentro de um arquivo ZIP.',
   },
   {
     question: 'Como e quando eu recebo o acesso?',
     answer:
-      'Após a confirmação do pagamento, você recebe as instruções de acesso e download na página de confirmação e por e-mail. O prazo exato de liberação será exibido no momento da compra.',
+      'Automaticamente. Com Pix ou cartão aprovado, os arquivos são gerados na hora; recortes pequenos ficam prontos em segundos e listas grandes em poucos minutos. O link aparece na página do pedido e chega por e-mail, e continua válido para novos downloads.',
+  },
+  {
+    question: 'Quanto custa?',
+    answer:
+      'R$ 19,90 para recortes de até 2.000 empresas. Acima disso, cada empresa adicional custa menos à medida que o volume cresce, e o carrinho dá 5% de desconto com 2 recortes, 10% com 3 ou 4 e 15% com 5 ou mais. O valor exato aparece antes do pagamento.',
   },
   {
     question: 'Os dados são atualizados?',
     answer:
-      'A periodicidade de atualização será informada de forma clara antes da compra, na seção da oferta, para que você saiba exatamente o que esperar.',
+      'Sim, mensalmente, conforme a publicação dos Dados Abertos da Receita Federal. A base atual é da competência 2026-09, e essa data vem em cada arquivo.',
   },
   {
     question: 'Preciso saber programação ou SQL para usar?',
@@ -53,16 +58,16 @@ export const faqItems: FaqItem[] = [
   {
     question: 'Existe suporte caso eu tenha dúvidas?',
     answer:
-      'Sim. Os canais de suporte disponíveis estão descritos na seção da oferta e na confirmação de compra.',
+      'Sim, pelo e-mail informado no rodapé e na página do seu pedido.',
   },
   {
     question: 'Como funciona a garantia?',
     answer:
-      'As condições de garantia, quando aplicáveis, são exibidas de forma clara na seção de garantia, antes da finalização da compra.',
+      'As condições de reembolso estão descritas na Política de Reembolso, disponível no rodapé do site.',
   },
   {
     question: 'Existe alguma restrição de uso dos dados?',
     answer:
-      'O uso deve respeitar a legislação aplicável, incluindo a LGPD. Orientações de uso responsável dos dados estão disponíveis na Política de Privacidade.',
+      'Sim. A licença é de uso interno e não transferível: a revenda ou redistribuição da lista é proibida. O uso dos contatos deve respeitar a LGPD, incluindo oferecer meio de descadastramento.',
   },
 ]
