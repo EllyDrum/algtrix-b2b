@@ -40,15 +40,18 @@ const TEXTO: Record<PedidoApi['status'], { titulo: string; detalhe: string }> = 
     titulo: 'Aguardando a confirmação do pagamento',
     detalhe: 'Pagamentos com Pix costumam ser confirmados em segundos. Esta página atualiza sozinha.',
   },
-  pago: { titulo: 'Pagamento confirmado', detalhe: 'Estamos preparando seus arquivos.' },
+  pago: {
+    titulo: 'Pagamento confirmado',
+    detalhe: 'Estamos preparando seus arquivos. Você pode fechar esta página: enviaremos o link de download por e-mail assim que ficarem prontos.',
+  },
   gerando: {
-    titulo: 'Gerando seus arquivos',
-    detalhe: 'Listas grandes podem levar alguns minutos. Você também receberá o link por e-mail.',
+    titulo: 'Pagamento confirmado. Gerando seus arquivos',
+    detalhe: 'Listas grandes levam de 5 a 10 minutos. Você pode fechar esta página: o link de download chegará no seu e-mail assim que os arquivos estiverem prontos.',
   },
   concluido: { titulo: 'Sua lista está pronta', detalhe: 'Baixe os arquivos abaixo. Este link continua válido.' },
   erro: {
     titulo: 'Estamos finalizando seu pedido',
-    detalhe: 'Houve uma falha na geração e uma nova tentativa já foi programada. Se persistir, fale com o suporte.',
+    detalhe: 'Seu pagamento está confirmado. A geração está sendo refeita automaticamente e o link chegará por e-mail. Se precisar, fale com contato@algtrix.com.',
   },
   cancelado: { titulo: 'Pagamento não concluído', detalhe: 'O pagamento foi recusado ou cancelado. Você pode tentar novamente.' },
 }

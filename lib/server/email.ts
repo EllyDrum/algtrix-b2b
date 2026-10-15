@@ -24,7 +24,7 @@ async function enviar(para: string, assunto: string, html: string): Promise<bool
   const res = await fetch('https://api.resend.com/emails', {
     method: 'POST',
     headers: { Authorization: `Bearer ${chave}`, 'Content-Type': 'application/json' },
-    body: JSON.stringify({ from: remetente, to: [para], subject: assunto, html }),
+    body: JSON.stringify({ from: remetente, to: [para], reply_to: process.env.EMAIL_RESPOSTA || 'contato@algtrix.com', subject: assunto, html }),
   })
   if (!res.ok) throw new Error(`Resend HTTP ${res.status}: ${await res.text()}`)
   return true
@@ -39,11 +39,11 @@ export async function enviarEmailEntrega(pedido: Pedido, linkPedido: string): Pr
     .join('')
   const html = `
   <div style="font-family:Arial,Helvetica,sans-serif;max-width:560px;margin:auto;color:#1c1533">
-    <h2>Sua lista está pronta</h2>
+    <h2 style="color:#1c1533">Sua lista está pronta</h2>
     <p>Olá${pedido.nome ? ` ${escapar(pedido.nome)}` : ''}, o pagamento do pedido <strong>${pedido.id}</strong> foi confirmado e os arquivos já estão disponíveis.</p>
     <ul>${linhas}</ul>
     <p>Total pago: <strong>${brl(pedido.totalCentavos)}</strong> · Dados da Receita Federal, base atualizada</p>
-    <p style="margin:28px 0"><a href="${linkPedido}" style="background:#059669;color:#fff;padding:14px 22px;border-radius:999px;text-decoration:none;font-weight:bold">Baixar meus arquivos</a></p>
+    <p style="margin:28px 0"><a href="${linkPedido}" style="background:#41b7c4;color:#170f2b;padding:14px 22px;border-radius:8px;text-decoration:none;font-weight:bold">Baixar meus arquivos</a></p>
     <p style="font-size:13px;color:#555">Guarde este e-mail: o link acima dá acesso permanente aos seus downloads. Licença de uso interno, não transferível. Ao usar os contatos, observe a LGPD.</p>
   </div>`
   return enviar(pedido.email, `Algtrix B2B: sua lista está pronta (pedido ${pedido.id})`, html)
