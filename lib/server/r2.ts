@@ -130,19 +130,29 @@ export class MultipartUpload {
   async escrever(chunk: Uint8Array): Promise<void> {
     this.buffer.push(chunk)
     this.bufferBytes += chunk.length
-    if (this.bufferBytes >= MultipartUpload.TAMANHO_PARTE) await this.enviarParte()
+    // O R2 exige que todas as partes, exceto a última, tenham exatamente o mesmo tamanho.
+    while (this.bufferBytes >= MultipartUpload.TAMANHO_PARTE) await this.enviarParte(MultipartUpload.TAMANHO_PARTE)
   }
 
-  private async enviarParte(): Promise<void> {
-    if (this.bufferBytes === 0) return
-    const body = new Uint8Array(this.bufferBytes)
+  /** Envia `tamanho` bytes do buffer (ou tudo, na parte final) e mantém o restante. */
+  private async enviarParte(tamanho = this.bufferBytes): Promise<void> {
+    if (this.bufferBytes === 0 || tamanho === 0) return
+    const body = new Uint8Array(tamanho)
     let offset = 0
-    for (const c of this.buffer) {
-      body.set(c, offset)
-      offset += c.length
+    while (offset < tamanho) {
+      const c = this.buffer[0]!
+      const falta = tamanho - offset
+      if (c.length <= falta) {
+        body.set(c, offset)
+        offset += c.length
+        this.buffer.shift()
+      } else {
+        body.set(c.subarray(0, falta), offset)
+        this.buffer[0] = c.subarray(falta)
+        offset += falta
+      }
     }
-    this.buffer = []
-    this.bufferBytes = 0
+    this.bufferBytes -= tamanho
     const dir = localDir()
     if (dir) {
       await fs.appendFile(path.join(dir, this.key), body)
