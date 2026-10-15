@@ -96,7 +96,8 @@ export async function criarSessaoCheckout(input: SessaoInput): Promise<{ id: str
       locale: 'pt-BR',
       customer_email: input.email,
       client_reference_id: input.pedidoId,
-      payment_method_types: ['card'],
+      // As formas de pagamento são definidas no painel da Stripe (Configurações > Formas de pagamento):
+      // deixar ativo somente Cartões. A API atual não aceita mais payment_method_types.
       payment_method_options: { card: { installments: { enabled: true } } },
       line_items: lineItems,
       success_url: input.urlRetorno,
