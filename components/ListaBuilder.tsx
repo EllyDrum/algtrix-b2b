@@ -101,8 +101,13 @@ export function ListaBuilder() {
           ? 'Esse recorte já está no carrinho.'
           : 'O carrinho atingiu o limite de itens.',
     )
-    if (r === 'adicionado')
+    if (r === 'adicionado') {
       track(AnalyticsEvent.FilterUsed, { uf, municipio: municipio ?? '', secoes: secoes.join(','), empresas, context: 'builder' })
+      // Leva o cliente direto ao carrinho e à forma de pagamento (no desktop o carrinho já está visível ao lado).
+      if (window.matchMedia('(max-width: 1023px)').matches) {
+        window.setTimeout(() => document.getElementById('carrinho')?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 150)
+      }
+    }
     window.setTimeout(() => setAviso(null), 3500)
   }
 

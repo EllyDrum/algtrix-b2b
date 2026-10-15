@@ -6,7 +6,7 @@ import PDFDocument from 'pdfkit'
 import { PassThrough } from 'node:stream'
 import { COMPETENCIA, PARTES_UF, PORTES, secaoDoCnae, UF_NOME, SECAO_NOME } from '../catalog'
 import type { ItemRecorte } from '../pricing-engine'
-import { headObject, MultipartUpload, parquetBufferR2 } from './r2'
+import { headObject, MultipartUpload, parquetBufferR2, putObject } from './r2'
 import type { ArquivoEntregue } from './pedidos'
 
 /** Acima deste volume o arquivo é entregue só em CSV (o XLSX fica pesado e o Excel limita 1.048.576 linhas). */
@@ -234,8 +234,13 @@ export async function gerarArquivoItem(
       cidades: [...resumoCidade.entries()].sort((a, b) => b[1] - a[1]).slice(0, 15),
     }
 
+    // Excel e PDF são gravados como arquivos próprios (download direto) e também dentro do ZIP.
+    const base = chave.replace(/\.zip$/, '')
+    const downloads: NonNullable<ArquivoEntregue['downloads']> = []
     if (comXlsx) {
       const xlsx = await gerarXlsx(linhasXlsx, resumo)
+      await putObject(`${base}.xlsx`, xlsx, 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+      downloads.push({ formato: 'XLSX', chave: `${base}.xlsx`, nomeArquivo: nomeArquivo.replace(/\.zip$/, '.xlsx'), bytes: xlsx.length })
       const arquivo = new ZipPassThrough('empresas.xlsx')
       zip.add(arquivo)
       arquivo.push(xlsx, true)
@@ -243,6 +248,8 @@ export async function gerarArquivoItem(
     }
 
     const pdf = await gerarPdf(linhasPdf, resumo)
+    await putObject(`${base}.pdf`, pdf, 'application/pdf')
+    downloads.push({ formato: 'PDF', chave: `${base}.pdf`, nomeArquivo: nomeArquivo.replace(/\.zip$/, '.pdf'), bytes: pdf.length })
     const arquivoPdf = new ZipPassThrough('relatorio.pdf')
     zip.add(arquivoPdf)
     arquivoPdf.push(pdf, true)
@@ -262,6 +269,7 @@ export async function gerarArquivoItem(
       bytes,
       linhas: total,
       formatos: comXlsx ? ['CSV', 'XLSX', 'PDF'] : ['CSV', 'PDF'],
+      downloads: [...downloads, { formato: 'CSV', chave, nomeArquivo, bytes }],
     }
   } catch (e) {
     await upload.abortar()

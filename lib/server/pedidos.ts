@@ -17,6 +17,8 @@ export interface ArquivoEntregue {
   bytes: number
   linhas: number
   formatos: string[]
+  /** Arquivos individuais para download direto (Excel, PDF e CSV compactado). */
+  downloads?: { formato: 'XLSX' | 'PDF' | 'CSV'; chave: string; nomeArquivo: string; bytes: number }[]
 }
 
 export interface Pedido {

@@ -4,6 +4,9 @@ import { useEffect, useState } from 'react'
 import { CheckCircle } from '@phosphor-icons/react/dist/ssr/CheckCircle'
 import { CircleNotch } from '@phosphor-icons/react/dist/ssr/CircleNotch'
 import { DownloadSimple } from '@phosphor-icons/react/dist/ssr/DownloadSimple'
+import { FileXls } from '@phosphor-icons/react/dist/ssr/FileXls'
+import { FilePdf } from '@phosphor-icons/react/dist/ssr/FilePdf'
+import { FileZip } from '@phosphor-icons/react/dist/ssr/FileZip'
 import { WarningCircle } from '@phosphor-icons/react/dist/ssr/WarningCircle'
 import { formatarBRL, formatarNumero } from '@/lib/pricing-engine'
 import { brand } from '@/config/brand'
@@ -17,7 +20,15 @@ interface PedidoApi {
   descontoCentavos: number
   totalCentavos: number
   competencia: string
-  arquivos: { indiceItem: number; nomeArquivo: string; linhas: number; bytes: number; formatos: string[]; url: string | null }[]
+  arquivos: {
+    indiceItem: number
+    nomeArquivo: string
+    linhas: number
+    bytes: number
+    formatos: string[]
+    url: string | null
+    downloads?: { formato: 'XLSX' | 'PDF' | 'CSV'; nomeArquivo: string; bytes: number; url: string | null }[]
+  }[]
   metodo: 'pix' | 'cartao' | null
   provedor: string | null
   beneficiario: { nome: string; chave: string } | null
@@ -129,27 +140,54 @@ export function PedidoStatus({ id, token }: { id: string; token: string }) {
         Pedido {pedido.id} · {pedido.email} · base {pedido.competencia}
       </p>
 
-      <ul className="mt-4 divide-y divide-algtrix-border rounded-md border border-algtrix-border bg-algtrix-bg">
+      <ul className="mt-4 space-y-3">
         {pedido.itens.map((item, i) => {
           const arq = pedido.arquivos.find((a) => a.indiceItem === i)
+          const downloads = arq?.downloads?.length ? arq.downloads : arq?.url ? [{ formato: 'CSV' as const, nomeArquivo: arq.nomeArquivo, bytes: arq.bytes, url: arq.url }] : []
+          const principais = downloads.filter((d) => d.formato !== 'CSV')
+          const csv = downloads.find((d) => d.formato === 'CSV')
           return (
-            <li key={i} className="flex flex-wrap items-center justify-between gap-3 p-4 text-sm">
-              <div>
-                <p className="font-medium text-algtrix-text">{item.descricao}</p>
-                <p className="text-algtrix-dim">
-                  {formatarNumero(arq?.linhas ?? item.empresas)} empresas
-                  {arq ? ` · ${arq.formatos.join(' + ')} · ${tamanho(arq.bytes)}` : ''}
-                </p>
-              </div>
-              {arq?.url ? (
-                <a
-                  href={arq.url}
-                  className="inline-flex items-center gap-2 rounded-md bg-algtrix-accent px-4 py-2.5 font-semibold text-algtrix-bg hover:bg-algtrix-accentHover"
-                >
-                  <DownloadSimple size={16} weight="bold" /> Baixar
-                </a>
+            <li key={i} className="rounded-lg border border-algtrix-border bg-algtrix-bg p-4 sm:p-5">
+              <p className="font-medium text-algtrix-text">{item.descricao}</p>
+              <p className="mt-0.5 text-sm text-algtrix-dim">
+                {formatarNumero(arq?.linhas ?? item.empresas)} empresas
+                {arq ? ` · base ${pedido.competencia}` : ''}
+              </p>
+              {downloads.length > 0 ? (
+                <div className="mt-4">
+                  <div className="grid gap-2 sm:grid-cols-2">
+                    {principais.map((d) => (
+                      <a
+                        key={d.formato}
+                        href={d.url ?? '#'}
+                        className="flex items-center gap-3 rounded-md bg-algtrix-accent px-4 py-3 text-white transition-colors hover:bg-algtrix-accentHover"
+                      >
+                        {d.formato === 'XLSX' ? <FileXls size={26} weight="duotone" /> : <FilePdf size={26} weight="duotone" />}
+                        <span className="min-w-0">
+                          <span className="block text-sm font-semibold">
+                            {d.formato === 'XLSX' ? 'Baixar Excel' : 'Baixar PDF'}
+                          </span>
+                          <span className="block text-xs text-white/80">
+                            {d.formato === 'XLSX' ? 'Planilha com resumo e lista completa' : 'Relatório formatado'} · {tamanho(d.bytes)}
+                          </span>
+                        </span>
+                        <DownloadSimple size={18} weight="bold" className="ml-auto shrink-0" />
+                      </a>
+                    ))}
+                  </div>
+                  {csv && (
+                    <a
+                      href={csv.url ?? '#'}
+                      className="mt-2 inline-flex items-center gap-2 text-sm font-medium text-algtrix-muted hover:text-algtrix-text"
+                    >
+                      <FileZip size={16} /> Também em CSV (ZIP com todos os arquivos) · {tamanho(csv.bytes)}
+                    </a>
+                  )}
+                </div>
               ) : (
-                <span className="text-xs text-algtrix-dim">{pedido.status === 'cancelado' ? '' : pedido.status === 'aguardando_pagamento' ? 'Liberado após o pagamento' : 'Em preparação'}</span>
+                <p className="mt-3 text-xs text-algtrix-dim">
+                  {pedido.status === 'cancelado' ? '' : pedido.status === 'aguardando_pagamento' ? 'Excel e PDF liberados após o pagamento' : 'Gerando Excel e PDF...'}
+                </p>
               )}
             </li>
           )

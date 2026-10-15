@@ -20,6 +20,14 @@ export async function GET(request: Request, { params }: { params: { id: string }
       bytes: a.bytes,
       formatos: a.formatos,
       url: pedido.status === 'concluido' || pedido.status === 'gerando' ? await linkDownload(a.chave, a.nomeArquivo) : null,
+      downloads: await Promise.all(
+        (a.downloads ?? []).map(async (d) => ({
+          formato: d.formato,
+          nomeArquivo: d.nomeArquivo,
+          bytes: d.bytes,
+          url: pedido.status === 'concluido' || pedido.status === 'gerando' ? await linkDownload(d.chave, d.nomeArquivo) : null,
+        })),
+      ),
     })),
   )
 

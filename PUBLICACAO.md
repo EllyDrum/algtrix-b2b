@@ -71,6 +71,7 @@ ou gerar novamente um pedido com erro. O acesso é pela chave `INTERNAL_SECRET` 
 ## Arquivos entregues (por recorte)
 
 - `empresas.csv`: lista completa (ponto e vírgula, UTF-8).
+- Botões diretos na página do pedido: **Baixar Excel** e **Baixar PDF** (arquivos individuais) e, abaixo, o ZIP com o CSV e todos os arquivos.
 - `empresas.xlsx`: aba "Resumo" (recorte, totais por segmento, porte e principais cidades) e aba "Empresas" com cabeçalho fixo, filtro e zebra. Até 100 mil empresas.
 - `relatorio.pdf`: A4 paisagem, capa com resumo e tabela paginada (lista completa até 5 mil empresas; acima disso, as primeiras 5 mil).
 - `LEIA-ME.txt`: descrição do recorte e licença de uso.
