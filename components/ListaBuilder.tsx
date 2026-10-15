@@ -9,6 +9,9 @@ import { ShieldCheck } from '@phosphor-icons/react/dist/ssr/ShieldCheck'
 import { Trash } from '@phosphor-icons/react/dist/ssr/Trash'
 import { ShoppingCart } from '@phosphor-icons/react/dist/ssr/ShoppingCart'
 import { CircleNotch } from '@phosphor-icons/react/dist/ssr/CircleNotch'
+import { QrCode } from '@phosphor-icons/react/dist/ssr/QrCode'
+import { CreditCard } from '@phosphor-icons/react/dist/ssr/CreditCard'
+import { formatarCnpj } from '@/lib/payments/pix-brcode'
 import { COMPETENCIA, PORTES, SECOES, UFS, type PorteCodigo } from '@/lib/catalog'
 import {
   contarEmpresas,
@@ -104,10 +107,10 @@ export function ListaBuilder() {
   }
 
   return (
-    <div className="grid gap-8 lg:grid-cols-[1fr_400px] lg:items-start">
+    <div className="grid gap-8 lg:grid-cols-[1fr_380px] lg:items-start">
       {/* Montagem do recorte */}
-      <div className="rounded-lg border border-algtrix-border bg-algtrix-surface p-5 sm:p-7">
-        <h2 className="text-lg font-semibold text-algtrix-text">1. Escolha a região</h2>
+      <div className="rounded-lg border border-algtrix-border bg-algtrix-surface p-5 sm:p-8">
+        <StepTitle n={1}>Escolha a região</StepTitle>
         <p className="mt-1 text-sm text-algtrix-muted">Estado inteiro ou uma cidade específica.</p>
         <div className="mt-3 grid gap-3 sm:grid-cols-[minmax(0,240px)_1fr]">
           <label className="flex flex-col gap-1">
@@ -118,7 +121,7 @@ export function ListaBuilder() {
                 setUf(e.target.value)
                 setMunicipio(null)
               }}
-              className="w-full rounded-md border border-algtrix-border bg-algtrix-bg px-3 py-3 text-[15px] text-algtrix-text focus:outline-none focus:ring-2 focus:ring-algtrix-accent/40"
+              className="field"
               aria-label="Estado"
             >
               {UFS.map((u) => (
@@ -137,7 +140,7 @@ export function ListaBuilder() {
         </div>
 
         <div className="mt-8 flex flex-wrap items-baseline justify-between gap-2">
-          <h2 className="text-lg font-semibold text-algtrix-text">2. Escolha os segmentos</h2>
+          <StepTitle n={2}>Escolha os segmentos</StepTitle>
           <button
             type="button"
             onClick={() => setSecoes([])}
@@ -179,7 +182,7 @@ export function ListaBuilder() {
           })}
         </div>
 
-        <h2 className="mt-8 text-lg font-semibold text-algtrix-text">3. Porte</h2>
+        <div className="mt-9"><StepTitle n={3}>Porte das empresas</StepTitle></div>
         <div className="mt-3 flex flex-wrap gap-2">
           {PORTES.map((p) => (
             <label
@@ -231,17 +234,7 @@ export function ListaBuilder() {
             </div>
             <div className="text-right">
               <p className="text-3xl font-semibold text-algtrix-text">{empresas ? formatarBRL(preco) : '-'}</p>
-              {empresas > 0 && (
-                <p className="text-sm text-algtrix-muted">
-                  {(preco / empresas / 100).toLocaleString('pt-BR', {
-                    style: 'currency',
-                    currency: 'BRL',
-                    minimumFractionDigits: 2,
-                    maximumFractionDigits: 4,
-                  })}{' '}
-                  por empresa
-                </p>
-              )}
+              <p className="text-sm text-algtrix-muted">valor do recorte</p>
             </div>
           </div>
           <button
@@ -305,12 +298,17 @@ function Carrinho({
   const [aceite, setAceite] = useState(false)
   const [metodo, setMetodo] = useState<'pix' | 'cartao'>('pix')
   const [lojaAtiva, setLojaAtiva] = useState<boolean | null>(null)
+  const [loja, setLoja] = useState<{ cartao: boolean; pix: string | null; beneficiario: { nome: string; chave: string } | null } | null>(null)
   const [interesseOk, setInteresseOk] = useState(false)
 
   useEffect(() => {
     fetch('/api/loja/status', { cache: 'no-store' })
-      .then((r) => r.json() as Promise<{ vendasAtivas: boolean }>)
-      .then((d) => setLojaAtiva(d.vendasAtivas))
+      .then((r) => r.json() as Promise<{ vendasAtivas: boolean; cartao: boolean; pix: string | null; beneficiario: { nome: string; chave: string } | null }>)
+      .then((d) => {
+        setLojaAtiva(d.vendasAtivas)
+        setLoja(d)
+        if (!d.cartao) setMetodo('pix')
+      })
       .catch(() => setLojaAtiva(false))
   }, [])
 
@@ -358,7 +356,7 @@ function Carrinho({
   }
 
   return (
-    <div className="rounded-lg border border-algtrix-border bg-algtrix-surface p-5 sm:p-6">
+    <div className="rounded-lg border border-algtrix-border bg-algtrix-bg p-5 shadow-soft sm:p-6">
       <h2 className="flex items-center gap-2 text-lg font-semibold text-algtrix-text">
         <ShoppingCart size={20} /> Seu carrinho
       </h2>
@@ -433,14 +431,14 @@ function Carrinho({
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="Seu e-mail"
-                  className="w-full rounded-md border border-algtrix-border bg-algtrix-bg px-3 py-2.5 text-sm text-algtrix-text"
+                  className="field"
                 />
                 <input
                   type="text"
                   value={nome}
                   onChange={(e) => setNome(e.target.value)}
                   placeholder="Nome (opcional)"
-                  className="w-full rounded-md border border-algtrix-border bg-algtrix-bg px-3 py-2.5 text-sm text-algtrix-text"
+                  className="field"
                 />
                 {erro && <p className="text-sm font-medium text-algtrix-risk">{erro}</p>}
                 <button
@@ -455,35 +453,49 @@ function Carrinho({
             )
           ) : (
           <form onSubmit={pagar} className="mt-5 space-y-3">
-            <fieldset className="grid grid-cols-2 gap-2">
+            <fieldset>
               <legend className="mb-2 text-sm font-semibold text-algtrix-text">Forma de pagamento</legend>
-              {(
-                [
-                  { id: 'pix', titulo: 'Pix', detalhe: 'QR Code na hora, liberação imediata' },
-                  { id: 'cartao', titulo: 'Cartão de crédito', detalhe: 'Em até 12x pelo Mercado Pago' },
-                ] as const
-              ).map((m) => (
-                <label
-                  key={m.id}
-                  className={cn(
-                    'cursor-pointer rounded-md border p-3 text-sm',
-                    metodo === m.id
-                      ? 'border-algtrix-accent bg-algtrix-accentSoft text-algtrix-text'
-                      : 'border-algtrix-border bg-algtrix-bg text-algtrix-muted',
-                  )}
-                >
-                  <input
-                    type="radio"
-                    name="metodo"
-                    value={m.id}
-                    checked={metodo === m.id}
-                    onChange={() => setMetodo(m.id)}
-                    className="sr-only"
-                  />
-                  <span className="block font-semibold text-algtrix-text">{m.titulo}</span>
-                  <span className="mt-0.5 block text-xs">{m.detalhe}</span>
-                </label>
-              ))}
+              <div className="grid gap-2">
+                {(
+                  [
+                    { id: 'pix', titulo: 'Pix', detalhe: 'QR Code na tela. Liberação após a confirmação.', Icone: QrCode },
+                    { id: 'cartao', titulo: 'Cartão de crédito', detalhe: 'Em até 12x, ambiente seguro do Mercado Pago.', Icone: CreditCard },
+                  ] as const
+                )
+                  .filter((m) => m.id !== 'cartao' || loja?.cartao !== false)
+                  .map((m) => (
+                    <label
+                      key={m.id}
+                      className={cn(
+                        'flex cursor-pointer items-start gap-3 rounded-md border p-3.5 text-sm transition-colors',
+                        metodo === m.id
+                          ? 'border-algtrix-accent bg-algtrix-accentSoft ring-1 ring-algtrix-accent'
+                          : 'border-algtrix-borderStrong bg-algtrix-bg hover:border-algtrix-accent/60',
+                      )}
+                    >
+                      <input
+                        type="radio"
+                        name="metodo"
+                        value={m.id}
+                        checked={metodo === m.id}
+                        onChange={() => setMetodo(m.id)}
+                        className="sr-only"
+                      />
+                      <span className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-md bg-algtrix-bg text-algtrix-accent ring-1 ring-algtrix-border">
+                        <m.Icone size={18} weight="duotone" />
+                      </span>
+                      <span>
+                        <span className="block font-semibold text-algtrix-text">{m.titulo}</span>
+                        <span className="mt-0.5 block text-xs text-algtrix-muted">{m.detalhe}</span>
+                      </span>
+                    </label>
+                  ))}
+              </div>
+              {metodo === 'pix' && loja?.beneficiario && (
+                <p className="mt-2 text-xs text-algtrix-dim">
+                  Pix para {loja.beneficiario.nome} · CNPJ {formatarCnpj(loja.beneficiario.chave)}
+                </p>
+              )}
             </fieldset>
             <input
               type="email"
@@ -491,14 +503,14 @@ function Carrinho({
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="Seu e-mail (receberá o link de download)"
-              className="w-full rounded-md border border-algtrix-border bg-algtrix-bg px-3 py-2.5 text-sm text-algtrix-text"
+              className="field"
             />
             <input
               type="text"
               value={nome}
               onChange={(e) => setNome(e.target.value)}
               placeholder="Nome (opcional)"
-              className="w-full rounded-md border border-algtrix-border bg-algtrix-bg px-3 py-2.5 text-sm text-algtrix-text"
+              className="field"
             />
             <input
               type="text"
@@ -506,7 +518,7 @@ function Carrinho({
               value={documento}
               onChange={(e) => setDocumento(e.target.value)}
               placeholder="CPF ou CNPJ (opcional, para nota fiscal)"
-              className="w-full rounded-md border border-algtrix-border bg-algtrix-bg px-3 py-2.5 text-sm text-algtrix-text"
+              className="field"
             />
             <label className="flex items-start gap-2 text-xs text-algtrix-muted">
               <input
@@ -535,13 +547,13 @@ function Carrinho({
           )}
           <ul className="mt-4 space-y-1.5 text-xs text-algtrix-muted">
             <li className="flex items-center gap-2">
-              <ShieldCheck size={14} className="text-algtrix-accent" /> Pagamento processado pelo Mercado Pago
+              <ShieldCheck size={14} className="text-algtrix-accent" /> {loja?.pix === 'estatico' && !loja?.cartao ? 'Pix direto para a conta da empresa' : 'Pagamento processado pelo Mercado Pago'}
             </li>
             <li className="flex items-center gap-2">
               <ShieldCheck size={14} className="text-algtrix-accent" /> Download liberado automaticamente após a confirmação
             </li>
             <li className="flex items-center gap-2">
-              <ShieldCheck size={14} className="text-algtrix-accent" /> Arquivos em CSV e Excel, com a data da base
+              <ShieldCheck size={14} className="text-algtrix-accent" /> Arquivos em CSV, Excel e PDF, com a data da base
             </li>
           </ul>
         </>
@@ -661,7 +673,7 @@ function BuscaCidade({
             aria-expanded={aberto}
             aria-controls="lista-cidades"
             aria-autocomplete="list"
-            className="w-full rounded-md border border-algtrix-border bg-algtrix-bg py-3 pl-9 pr-3 text-[15px] text-algtrix-text placeholder:text-algtrix-dim focus:outline-none focus:ring-2 focus:ring-algtrix-accent/40"
+            className="field pl-9"
           />
           {aberto && lista.length > 0 && (
             <ul
@@ -703,5 +715,16 @@ function BuscaCidade({
         </div>
       )}
     </div>
+  )
+}
+
+function StepTitle({ n, children }: { n: number; children: React.ReactNode }) {
+  return (
+    <h2 className="flex items-center gap-3 text-lg font-semibold text-algtrix-text">
+      <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-algtrix-text font-mono text-xs font-semibold text-white">
+        {n}
+      </span>
+      {children}
+    </h2>
   )
 }

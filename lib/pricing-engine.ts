@@ -32,11 +32,7 @@ export const FAIXAS: { ate: number; centavosPorEmpresa: number }[] = [
 ]
 
 /** Desconto progressivo por quantidade de itens no carrinho. */
-export const DESCONTOS_CARRINHO: { minItens: number; percentual: number }[] = [
-  { minItens: 5, percentual: 15 },
-  { minItens: 3, percentual: 10 },
-  { minItens: 2, percentual: 5 },
-]
+export const DESCONTOS_CARRINHO: { minItens: number; percentual: number }[] = [{ minItens: 2, percentual: 5 }]
 
 export const MAX_ITENS_CARRINHO = 20
 

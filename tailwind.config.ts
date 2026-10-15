@@ -58,11 +58,14 @@ const config: Config = {
         mono: ['var(--font-mono)', 'ui-monospace', 'monospace'],
       },
       maxWidth: {
-        page: '1240px',
-        pageWide: '1440px',
+        page: '1200px',
+        pageWide: '1200px',
+        prose: '62ch',
       },
       boxShadow: {
         card: '0 1px 2px rgba(24,18,43,0.04), 0 16px 40px -18px rgba(24,18,43,0.14)',
+        soft: '0 1px 2px rgba(24,18,43,0.05), 0 8px 24px -16px rgba(24,18,43,0.12)',
+        lift: '0 2px 4px rgba(24,18,43,0.05), 0 24px 48px -20px rgba(24,18,43,0.2)',
         'card-dark': '0 20px 44px -16px rgba(24,18,43,0.22)',
         glow: '0 0 0 1px rgba(15,138,151,0.22), 0 12px 28px -14px rgba(15,138,151,0.22)',
       },

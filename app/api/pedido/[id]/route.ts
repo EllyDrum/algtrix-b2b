@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { lerPedido, tokenValido } from '@/lib/server/pedidos'
 import { linkDownload } from '@/lib/server/r2'
+import { statusLoja } from '@/lib/server/config'
 
 export const dynamic = 'force-dynamic'
 
@@ -35,6 +36,8 @@ export async function GET(request: Request, { params }: { params: { id: string }
       competencia: pedido.competencia,
       arquivos,
       metodo: pedido.metodo ?? null,
+      provedor: pedido.pagamento?.provedor ?? null,
+      beneficiario: statusLoja().beneficiario,
       pix:
         pedido.status === 'aguardando_pagamento' && pedido.pix
           ? { qrCode: pedido.pix.qrCode, qrCodeBase64: pedido.pix.qrCodeBase64, expiraEm: pedido.pix.expiraEm }

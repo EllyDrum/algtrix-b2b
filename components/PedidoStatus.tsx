@@ -7,6 +7,7 @@ import { DownloadSimple } from '@phosphor-icons/react/dist/ssr/DownloadSimple'
 import { WarningCircle } from '@phosphor-icons/react/dist/ssr/WarningCircle'
 import { formatarBRL, formatarNumero } from '@/lib/pricing-engine'
 import { brand } from '@/config/brand'
+import { formatarCnpj } from '@/lib/payments/pix-brcode'
 
 interface PedidoApi {
   id: string
@@ -18,6 +19,8 @@ interface PedidoApi {
   competencia: string
   arquivos: { indiceItem: number; nomeArquivo: string; linhas: number; bytes: number; formatos: string[]; url: string | null }[]
   metodo: 'pix' | 'cartao' | null
+  provedor: string | null
+  beneficiario: { nome: string; chave: string } | null
   pix: { qrCode: string; qrCodeBase64: string; expiraEm: string } | null
 }
 
@@ -83,7 +86,13 @@ export function PedidoStatus({ id, token }: { id: string; token: string }) {
     else setErro('Não foi possível gerar um novo Pix agora. Tente novamente em instantes.')
   }
 
-  const t = TEXTO[pedido.status]
+  const t =
+    pedido.status === 'aguardando_pagamento' && pedido.provedor === 'pix-estatico'
+      ? {
+          titulo: 'Aguardando o pagamento',
+          detalhe: 'Pague pelo QR Code abaixo. Assim que o recebimento for confirmado, os arquivos aparecem nesta página e o link chega por e-mail.',
+        }
+      : TEXTO[pedido.status]
   const pronto = pedido.status === 'concluido'
 
   return (
@@ -102,7 +111,9 @@ export function PedidoStatus({ id, token }: { id: string; token: string }) {
         </div>
       </div>
 
-      {pedido.status === 'aguardando_pagamento' && pedido.pix && <BlocoPix pix={pedido.pix} onNovo={novoPix} />}
+      {pedido.status === 'aguardando_pagamento' && pedido.pix && (
+        <BlocoPix pix={pedido.pix} onNovo={novoPix} estatico={pedido.provedor === 'pix-estatico'} beneficiario={pedido.beneficiario} />
+      )}
 
       {pedido.status === 'cancelado' && (
         <button
@@ -161,7 +172,17 @@ export function PedidoStatus({ id, token }: { id: string; token: string }) {
   )
 }
 
-function BlocoPix({ pix, onNovo }: { pix: { qrCode: string; qrCodeBase64: string; expiraEm: string }; onNovo: () => void }) {
+function BlocoPix({
+  pix,
+  onNovo,
+  estatico,
+  beneficiario,
+}: {
+  pix: { qrCode: string; qrCodeBase64: string; expiraEm: string }
+  onNovo: () => void
+  estatico: boolean
+  beneficiario: { nome: string; chave: string } | null
+}) {
   const [copiado, setCopiado] = useState(false)
   const [agora, setAgora] = useState(() => Date.now())
   useEffect(() => {
@@ -182,7 +203,7 @@ function BlocoPix({ pix, onNovo }: { pix: { qrCode: string; qrCodeBase64: string
     }
   }
 
-  if (restante === 0) {
+  if (restante === 0 && !estatico) {
     return (
       <div className="mt-6 rounded-lg border border-algtrix-border bg-algtrix-bg p-5 text-center">
         <p className="text-sm text-algtrix-muted">O QR Code expirou. Gere um novo para concluir o pagamento.</p>
@@ -198,33 +219,55 @@ function BlocoPix({ pix, onNovo }: { pix: { qrCode: string; qrCodeBase64: string
   }
 
   return (
-    <div className="mt-6 grid gap-5 rounded-lg border-2 border-algtrix-accent bg-algtrix-bg p-5 sm:grid-cols-[200px_1fr] sm:items-center">
-      {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img
-        src={`data:image/png;base64,${pix.qrCodeBase64}`}
-        alt="QR Code do Pix"
-        width={200}
-        height={200}
-        className="mx-auto h-[200px] w-[200px] rounded-md bg-white p-2"
-      />
-      <div>
-        <p className="font-semibold text-algtrix-text">Pague com Pix</p>
-        <ol className="mt-2 list-decimal space-y-1 pl-5 text-sm text-algtrix-muted">
-          <li>Abra o app do seu banco e escolha Pix.</li>
-          <li>Leia o QR Code ou use o Pix Copia e Cola.</li>
-          <li>A liberação é automática assim que o pagamento cair.</li>
-        </ol>
-        <button
-          type="button"
-          onClick={copiar}
-          className="mt-4 w-full rounded-md border border-algtrix-accent px-4 py-2.5 text-sm font-semibold text-algtrix-accent hover:bg-algtrix-accentSoft"
-        >
-          {copiado ? 'Código copiado' : 'Copiar código Pix Copia e Cola'}
-        </button>
-        <p className="mt-2 text-center text-xs text-algtrix-dim">
-          Expira em {String(min).padStart(2, '0')}:{String(seg).padStart(2, '0')}
-        </p>
+    <div className="mt-6 overflow-hidden rounded-lg border-2 border-algtrix-accent bg-algtrix-bg">
+      <div className="grid gap-6 p-5 sm:grid-cols-[220px_1fr] sm:items-start sm:p-6">
+        <div className="mx-auto w-[220px]">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={`data:image/png;base64,${pix.qrCodeBase64}`}
+            alt="QR Code do Pix"
+            width={220}
+            height={220}
+            className="h-[220px] w-[220px] rounded-md border border-algtrix-border bg-white p-2"
+          />
+          {!estatico && (
+            <p className="mt-2 text-center text-xs text-algtrix-dim">
+              Expira em {String(min).padStart(2, '0')}:{String(seg).padStart(2, '0')}
+            </p>
+          )}
+        </div>
+        <div>
+          <p className="text-lg font-semibold text-algtrix-text">Pague com Pix</p>
+          {beneficiario && (
+            <dl className="mt-3 grid grid-cols-[auto_1fr] gap-x-3 gap-y-1 rounded-md bg-algtrix-surface px-3 py-2.5 text-sm">
+              <dt className="text-algtrix-dim">Favorecido</dt>
+              <dd className="font-medium text-algtrix-text">{beneficiario.nome}</dd>
+              <dt className="text-algtrix-dim">CNPJ</dt>
+              <dd className="font-mono text-algtrix-text">{formatarCnpj(beneficiario.chave)}</dd>
+            </dl>
+          )}
+          <ol className="mt-4 list-decimal space-y-1.5 pl-5 text-sm text-algtrix-muted">
+            <li>Abra o aplicativo do seu banco e escolha pagar com Pix.</li>
+            <li>Leia o QR Code ou cole o código Pix Copia e Cola.</li>
+            <li>Confira o favorecido e o valor e confirme o pagamento.</li>
+            <li>
+              {estatico
+                ? 'Assim que o recebimento for confirmado, os arquivos são liberados nesta página e por e-mail.'
+                : 'A liberação é automática em segundos após o pagamento.'}
+            </li>
+          </ol>
+          <button
+            type="button"
+            onClick={copiar}
+            className="mt-5 flex w-full items-center justify-center gap-2 rounded-md bg-algtrix-accent px-4 py-3 text-sm font-semibold text-white hover:bg-algtrix-accentHover"
+          >
+            {copiado ? 'Código copiado' : 'Copiar código Pix Copia e Cola'}
+          </button>
+        </div>
       </div>
+      <p className="border-t border-algtrix-border bg-algtrix-surface px-5 py-2.5 text-xs text-algtrix-dim">
+        Esta página atualiza sozinha. Guarde o link do pedido: ele dá acesso aos arquivos depois da liberação.
+      </p>
     </div>
   )
 }

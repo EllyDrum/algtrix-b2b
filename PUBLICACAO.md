@@ -54,9 +54,23 @@ R2_LOCAL_DIR=<pasta com base/2026-09/...> npx tsx --tsconfig tsconfig.json --env
 
 ## Formas de pagamento
 
-- **Pix**: o QR Code e o código Copia e Cola são gerados pela API do Mercado Pago e exibidos
-  na página do pedido, com validade de 30 minutos e botão para gerar um novo QR Code.
-  Requer chave Pix cadastrada na conta Mercado Pago.
-- **Cartão de crédito**: Checkout Pro do Mercado Pago, restrito a cartão (até 12x).
-- **Recebimento**: o dinheiro entra no saldo do Mercado Pago; a transferência para a conta
-  bancária da empresa é configurada no próprio painel do Mercado Pago (não no código).
+O site aceita duas configurações, que podem coexistir:
+
+| Modo | Variáveis | Como funciona |
+| --- | --- | --- |
+| **Pix na chave da empresa** | `PIX_CHAVE` (CNPJ), `PIX_NOME`, `PIX_CIDADE` | O site gera o QR Code e o Copia e Cola (padrão BR Code do Banco Central) com o valor e o número do pedido. O cliente paga direto na conta da empresa. A confirmação é manual: confira o extrato e clique em "Confirmar pagamento" em `/admin/pedidos` (chave `INTERNAL_SECRET`). Os arquivos são gerados em seguida. |
+| **Mercado Pago** | `MP_ACCESS_TOKEN`, `MP_WEBHOOK_SECRET` | Pix com confirmação automática (webhook) e cartão de crédito em até 12x. Quando configurado, o Pix passa a ser cobrado pelo Mercado Pago; o cartão só existe neste modo. |
+
+Para a loja aceitar pedidos é preciso: a entrega configurada (R2 + `ORDER_TOKEN_SECRET` + `INTERNAL_SECRET`) e ao menos um dos modos acima.
+
+## Painel interno
+
+`/admin/pedidos`: lista os pedidos, situação e itens; permite confirmar um Pix recebido na chave da empresa
+ou gerar novamente um pedido com erro. O acesso é pela chave `INTERNAL_SECRET` (não compartilhe o link com a chave).
+
+## Arquivos entregues (por recorte)
+
+- `empresas.csv`: lista completa (ponto e vírgula, UTF-8).
+- `empresas.xlsx`: aba "Resumo" (recorte, totais por segmento, porte e principais cidades) e aba "Empresas" com cabeçalho fixo, filtro e zebra. Até 100 mil empresas.
+- `relatorio.pdf`: A4 paisagem, capa com resumo e tabela paginada (lista completa até 5 mil empresas; acima disso, as primeiras 5 mil).
+- `LEIA-ME.txt`: descrição do recorte e licença de uso.

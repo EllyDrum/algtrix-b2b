@@ -11,6 +11,7 @@ import { Lightning } from '@phosphor-icons/react/dist/ssr/Lightning'
 import { Bank } from '@phosphor-icons/react/dist/ssr/Bank'
 import { Briefcase } from '@phosphor-icons/react/dist/ssr/Briefcase'
 import { Reveal } from '@/components/ui/Reveal'
+import { Section, SectionHeader } from '@/components/ui/Section'
 import { product } from '@/config/product'
 import type { Icon } from '@phosphor-icons/react'
 
@@ -31,21 +32,19 @@ const SEGMENT_META: Record<string, { icon: Icon; description: string }> = {
 
 export function Segments() {
   return (
-    <section className="bg-algtrix-surface py-20 sm:py-24">
-      <div className="mx-auto max-w-pageWide px-4 sm:px-6 lg:px-10">
-        <Reveal>
-          <h2 className="max-w-[24ch] font-sans text-3xl font-semibold leading-tight tracking-tight text-algtrix-text sm:text-4xl">
-            Segmentos que você encontra na base.
-          </h2>
-        </Reveal>
-
-        <div className="mt-10 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
+    <Section tone="bg">
+        <SectionHeader
+          eyebrow="Segmentos"
+          title="Segmentos que você encontra na base."
+          lead="Exemplos de recortes por atividade. Na compra, você escolhe entre as 21 seções da CNAE."
+        />
+        <div className="mt-10 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
           {product.segments.map((segment, index) => {
             const meta = SEGMENT_META[segment]
             if (!meta) return null
             return (
               <Reveal key={segment} delay={index * 0.02}>
-                <div className="flex h-full flex-col gap-2.5 rounded-lg border border-algtrix-border bg-algtrix-bg p-5">
+                <div className="flex h-full flex-col gap-2.5 rounded-lg border border-algtrix-border bg-algtrix-surface p-5 transition-shadow hover:shadow-soft">
                   <meta.icon size={20} className="text-algtrix-accent" weight="duotone" />
                   <p className="text-[15px] font-semibold text-algtrix-text">{segment}</p>
                   <p className="text-xs leading-relaxed text-algtrix-dim">{meta.description}</p>
@@ -54,7 +53,6 @@ export function Segments() {
             )
           })}
         </div>
-      </div>
-    </section>
+    </Section>
   )
 }

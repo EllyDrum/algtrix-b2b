@@ -1,21 +1,18 @@
 import { Navbar } from '@/sections/Navbar'
 import { Hero } from '@/sections/Hero'
 import { TrustStrip } from '@/sections/TrustStrip'
-import { Problem } from '@/sections/Problem'
+import { ComoFunciona } from '@/sections/ComoFunciona'
 import { DemoSection } from '@/sections/DemoSection'
 import { Benefits } from '@/sections/Benefits'
-import { Filters } from '@/sections/Filters'
-import { ICP } from '@/sections/ICP'
 import { DataSample } from '@/sections/DataSample'
 import { Segments } from '@/sections/Segments'
-import { WhyAlgtrix } from '@/sections/WhyAlgtrix'
 import { Comparison } from '@/sections/Comparison'
 import { Pricing } from '@/sections/Pricing'
+import { WhyAlgtrix } from '@/sections/WhyAlgtrix'
 import { FAQ } from '@/sections/FAQ'
 import { FinalCTA } from '@/sections/FinalCTA'
 import { Footer } from '@/sections/Footer'
 import { StickyCTA } from '@/sections/StickyCTA'
-import { ExitIntentTrigger } from '@/sections/ExitIntentTrigger'
 
 export default function HomePage() {
   return (
@@ -24,22 +21,19 @@ export default function HomePage() {
       <main>
         <Hero />
         <TrustStrip />
-        <Problem />
+        <ComoFunciona />
         <DemoSection />
         <Benefits />
-        <Filters />
-        <ICP />
         <DataSample />
         <Segments />
-        <WhyAlgtrix />
         <Comparison />
         <Pricing />
+        <WhyAlgtrix />
         <FAQ />
         <FinalCTA />
       </main>
       <Footer />
       <StickyCTA />
-      <ExitIntentTrigger />
     </>
   )
 }

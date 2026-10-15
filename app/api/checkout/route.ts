@@ -6,7 +6,8 @@ import { criarPagamentoPix, criarPreferencia } from '@/lib/payments/mercadopago'
 import { acionarGeracao, pagamentoSimuladoPermitido, urlDoSite } from '@/lib/server/site'
 import { enviarEmailPagamentoPendente } from '@/lib/server/email'
 import { municipiosDosItens } from '@/lib/server/municipios'
-import { vendasAtivas } from '@/lib/server/config'
+import { statusLoja } from '@/lib/server/config'
+import { criarPixEstatico } from '@/lib/payments/pix-brcode'
 
 export const dynamic = 'force-dynamic'
 
@@ -30,7 +31,8 @@ export async function POST(request: Request) {
     metodo?: string
   } | null
 
-  if (!vendasAtivas()) {
+  const loja = statusLoja()
+  if (!loja.vendasAtivas) {
     return NextResponse.json(
       { error: 'As compras online estão em fase final de configuração. Deixe seu e-mail para ser avisado.' },
       { status: 503 },
@@ -42,7 +44,7 @@ export async function POST(request: Request) {
   if (corpo?.aceite !== true) {
     return NextResponse.json({ error: 'É preciso aceitar os termos de uso e a política de privacidade.' }, { status: 400 })
   }
-  const metodo: 'pix' | 'cartao' = corpo?.metodo === 'cartao' ? 'cartao' : 'pix'
+  const metodo: 'pix' | 'cartao' = corpo?.metodo === 'cartao' && loja.cartao ? 'cartao' : 'pix'
   const documento = (corpo?.documento ?? '').replace(/\D/g, '')
   if (documento && documento.length !== 11 && documento.length !== 14) {
     return NextResponse.json({ error: 'CPF ou CNPJ inválido.' }, { status: 400 })
@@ -72,6 +74,16 @@ export async function POST(request: Request) {
   }
 
   try {
+    if (metodo === 'pix' && loja.pix === 'estatico') {
+      // Pix direto na chave da empresa: o cliente paga e a confirmação é feita no painel interno.
+      const pix = await criarPixEstatico(pedido.id, pedido.totalCentavos)
+      pedido.pagamento = { provedor: 'pix-estatico', id: pix.id, status: 'pending' }
+      pedido.pix = { pagamentoId: pix.id, qrCode: pix.qrCode, qrCodeBase64: pix.qrCodeBase64, expiraEm: pix.expiraEm }
+      await salvarPedido(pedido)
+      await enviarEmailPagamentoPendente(pedido, linkPedido).catch(() => false)
+      return NextResponse.json({ pedidoId: pedido.id, checkoutUrl: linkPedido })
+    }
+
     if (metodo === 'pix') {
       const pix = await criarPagamentoPix({
         pedidoId: pedido.id,

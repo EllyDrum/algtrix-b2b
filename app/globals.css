@@ -10,10 +10,10 @@
  * em vez de tingir a página inteira de escuro.
  */
 :root {
-  --algtrix-bg: #fcfbfe;
-  --algtrix-surface: #f5f2fa;
-  --algtrix-surface-2: #ece7f5;
-  --algtrix-surface-3: #e3ddf0;
+  --algtrix-bg: #ffffff;
+  --algtrix-surface: #f7f6fb;
+  --algtrix-surface-2: #eeebf6;
+  --algtrix-surface-3: #e4dff0;
 
   --algtrix-border: rgba(28, 21, 51, 0.1);
   --algtrix-border-strong: rgba(28, 21, 51, 0.18);
@@ -81,6 +81,42 @@ body {
 
 .tabular {
   font-variant-numeric: tabular-nums;
+}
+
+/* Títulos: Sora com tracking levemente negativo para um visual mais editorial. */
+h1,
+h2,
+h3 {
+  font-family: var(--font-display), system-ui, sans-serif;
+  letter-spacing: -0.02em;
+  text-wrap: balance;
+}
+
+p {
+  text-wrap: pretty;
+}
+
+/* Campos de formulário com aparência consistente em todo o site. */
+.field {
+  width: 100%;
+  border-radius: 10px;
+  border: 1px solid var(--algtrix-border-strong);
+  background: var(--algtrix-bg);
+  padding: 0.75rem 0.875rem;
+  font-size: 0.9375rem;
+  color: var(--algtrix-text);
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+.field::placeholder {
+  color: var(--algtrix-dim);
+}
+.field:focus {
+  outline: none;
+  border-color: var(--algtrix-accent);
+  box-shadow: 0 0 0 3px var(--algtrix-accent-soft);
+}
+.field:disabled {
+  opacity: 0.6;
 }
 
 @media (prefers-reduced-motion: reduce) {

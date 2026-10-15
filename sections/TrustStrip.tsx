@@ -1,41 +1,30 @@
-import { Database } from '@phosphor-icons/react/dist/ssr/Database'
-import { FunnelSimple } from '@phosphor-icons/react/dist/ssr/FunnelSimple'
-import { MapPinLine } from '@phosphor-icons/react/dist/ssr/MapPinLine'
-import { CloudArrowDown } from '@phosphor-icons/react/dist/ssr/CloudArrowDown'
-import { Headset } from '@phosphor-icons/react/dist/ssr/Headset'
-import { ButtonLink } from '@/components/ui/Button'
-import { Reveal } from '@/components/ui/Reveal'
+import { COMPETENCIA, TOTAL_EMPRESAS } from '@/lib/catalog'
+import { formatarNumero } from '@/lib/pricing-engine'
 
-const ITEMS = [
-  { icon: Database, label: 'Dados estruturados' },
-  { icon: FunnelSimple, label: 'Filtros avançados' },
-  { icon: MapPinLine, label: 'Cobertura nacional' },
-  { icon: CloudArrowDown, label: 'Entrega digital' },
-  { icon: Headset, label: 'Suporte' },
+const [ano, mes] = COMPETENCIA.split('-')
+const MESES = ['jan', 'fev', 'mar', 'abr', 'mai', 'jun', 'jul', 'ago', 'set', 'out', 'nov', 'dez']
+const competenciaLegivel = `${MESES[Number(mes) - 1]}/${ano}`
+
+const STATS = [
+  { valor: formatarNumero(TOTAL_EMPRESAS), rotulo: 'empresas ativas' },
+  { valor: '27', rotulo: 'estados cobertos' },
+  { valor: '5.572', rotulo: 'cidades disponíveis' },
+  { valor: competenciaLegivel, rotulo: 'base atualizada' },
 ]
 
+/** Faixa de números reais da base, logo abaixo do hero. */
 export function TrustStrip() {
   return (
-    <section className="border-b border-algtrix-border bg-algtrix-bg py-10">
-      <div className="mx-auto max-w-pageWide px-4 sm:px-6 lg:px-10">
-        <Reveal>
-          <div className="flex flex-col items-start justify-between gap-6 lg:flex-row lg:items-center">
-            <p className="max-w-[38ch] text-[15px] leading-relaxed text-algtrix-muted">
-              Dados estruturados para uma operação comercial mais inteligente.
+    <section className="border-y border-algtrix-border bg-algtrix-surface">
+      <div className="mx-auto grid max-w-pageWide grid-cols-2 divide-algtrix-border px-5 sm:px-8 lg:grid-cols-4 lg:divide-x">
+        {STATS.map((s) => (
+          <div key={s.rotulo} className="py-6 lg:px-8 lg:py-8 lg:first:pl-0 lg:last:pr-0">
+            <p className="tabular font-sans text-2xl font-semibold tracking-tight text-algtrix-text sm:text-3xl">
+              {s.valor}
             </p>
-            <ButtonLink href="#dados" variant="secondary" size="md">
-              Explorar os dados
-            </ButtonLink>
+            <p className="mt-1 text-sm text-algtrix-muted">{s.rotulo}</p>
           </div>
-          <div className="mt-8 grid grid-cols-2 gap-6 sm:grid-cols-5">
-            {ITEMS.map(({ icon: Icon, label }) => (
-              <div key={label} className="flex items-center gap-2.5 text-sm text-algtrix-muted">
-                <Icon size={18} className="text-algtrix-accent" />
-                {label}
-              </div>
-            ))}
-          </div>
-        </Reveal>
+        ))}
       </div>
     </section>
   )

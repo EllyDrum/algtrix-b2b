@@ -2,6 +2,8 @@ import { NextResponse } from 'next/server'
 import { lerPedido, salvarPedido, tokenValido } from '@/lib/server/pedidos'
 import { criarPagamentoPix } from '@/lib/payments/mercadopago'
 import { urlDoSite } from '@/lib/server/site'
+import { statusLoja } from '@/lib/server/config'
+import { criarPixEstatico } from '@/lib/payments/pix-brcode'
 
 export const dynamic = 'force-dynamic'
 
@@ -18,6 +20,15 @@ export async function POST(request: Request, { params }: { params: { id: string 
     return NextResponse.json({ ok: true, reaproveitado: true })
   }
   try {
+    if (statusLoja().pix === 'estatico') {
+      const pix = await criarPixEstatico(pedido.id, pedido.totalCentavos)
+      pedido.metodo = 'pix'
+      pedido.status = 'aguardando_pagamento'
+      pedido.pagamento = { provedor: 'pix-estatico', id: pix.id, status: 'pending' }
+      pedido.pix = { pagamentoId: pix.id, qrCode: pix.qrCode, qrCodeBase64: pix.qrCodeBase64, expiraEm: pix.expiraEm }
+      await salvarPedido(pedido)
+      return NextResponse.json({ ok: true })
+    }
     const pix = await criarPagamentoPix({
       pedidoId: pedido.id,
       valorCentavos: pedido.totalCentavos,

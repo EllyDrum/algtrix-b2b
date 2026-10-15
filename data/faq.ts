@@ -13,7 +13,7 @@ export const faqItems: FaqItem[] = [
   {
     question: 'O que está incluído na oferta?',
     answer:
-      'Cada recorte que você monta (estado ou cidade, segmentos, porte e opção de MEI) vira um arquivo ZIP com a lista em CSV, a mesma lista em Excel (até 100 mil empresas) e um arquivo LEIA-ME com a data da base.',
+      'Cada recorte que você monta (estado ou cidade, segmentos, porte e opção de MEI) vira um arquivo ZIP com a lista em CSV, a mesma lista em Excel (até 100 mil empresas), um relatório em PDF e um arquivo LEIA-ME com a data da base.',
   },
   {
     question: 'Quais dados estão disponíveis?',
@@ -23,7 +23,7 @@ export const faqItems: FaqItem[] = [
   {
     question: 'Qual é o formato dos arquivos?',
     answer:
-      'CSV separado por ponto e vírgula (abre direto no Excel) e XLSX para recortes de até 100 mil empresas, dentro de um arquivo ZIP.',
+      'Um arquivo ZIP com a lista em CSV (abre direto no Excel), em Excel (.xlsx, com aba de resumo, para recortes de até 100 mil empresas) e um relatório em PDF formatado com resumo por segmento e porte.',
   },
   {
     question: 'Como e quando eu recebo o acesso?',
@@ -33,7 +33,7 @@ export const faqItems: FaqItem[] = [
   {
     question: 'Quanto custa?',
     answer:
-      'R$ 19,90 para recortes de até 2.000 empresas. Acima disso, cada empresa adicional custa menos à medida que o volume cresce, e o carrinho dá 5% de desconto com 2 recortes, 10% com 3 ou 4 e 15% com 5 ou mais. O valor exato aparece antes do pagamento.',
+      'Listas a partir de R$ 19,90. O valor depende do tamanho do recorte e é mostrado antes do pagamento, assim que você escolhe a região, os segmentos e o porte. Ao comprar dois ou mais recortes, o carrinho aplica 5% de desconto no total.',
   },
   {
     question: 'Os dados são atualizados?',

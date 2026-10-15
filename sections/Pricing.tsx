@@ -1,111 +1,104 @@
 'use client'
 
 import { CheckCircle } from '@phosphor-icons/react/dist/ssr/CheckCircle'
+import { Section, SectionHeader } from '@/components/ui/Section'
 import { Reveal } from '@/components/ui/Reveal'
 import { ButtonLink } from '@/components/ui/Button'
-import { product } from '@/config/product'
 import { COMPETENCIA, TOTAL_EMPRESAS } from '@/lib/catalog'
 import { DESCONTOS_CARRINHO, formatarBRL, formatarNumero, precoPorQuantidade } from '@/lib/pricing-engine'
 import { track } from '@/lib/analytics'
 import { AnalyticsEvent } from '@/config/analytics'
 
-const EXEMPLOS = [2_000, 5_000, 10_000, 50_000, 100_000, 250_000, 1_000_000]
-
-const INCLUIDO = [
-  'Lista exata do recorte escolhido: estado ou cidade, segmentos e porte',
-  'Arquivo ZIP com CSV e Excel (até 100 mil empresas)',
-  'CNPJ, razão social, CNAE, porte, endereço, telefones e e-mail',
-  'Download imediato após Pix ou cartão aprovado',
-  'Link de download permanente na página do pedido e por e-mail',
+/** Exemplos de tamanho de recorte exibidos na vitrine (o preço exato aparece no carrinho). */
+const EXEMPLOS: { rotulo: string; empresas: number; nota: string }[] = [
+  { rotulo: 'Até 2.000 empresas', empresas: 2_000, nota: 'Uma cidade ou um nicho' },
+  { rotulo: '10.000 empresas', empresas: 10_000, nota: 'Um segmento em uma região' },
+  { rotulo: '50.000 empresas', empresas: 50_000, nota: 'Um segmento em um estado' },
+  { rotulo: '250.000 empresas', empresas: 250_000, nota: 'Vários segmentos ou estados' },
 ]
 
-const DETAILS = [
-  { label: 'Formato', value: product.deliverable.formats.join(' e ') },
-  { label: 'Atualização', value: product.deliverable.updateFrequency },
-  { label: 'Cobertura', value: `${formatarNumero(TOTAL_EMPRESAS)} empresas ativas` },
-  { label: 'Pagamento', value: 'Pix ou cartão, sem assinatura' },
+const INCLUIDO = [
+  'Recorte exato: estado ou cidade, segmentos e porte',
+  'Arquivo ZIP com CSV, Excel (até 100 mil empresas) e relatório em PDF',
+  'CNPJ, razão social, CNAE, porte, endereço, telefones e e-mail',
+  'Download imediato após Pix ou cartão aprovado',
+  'Link de download permanente, na página do pedido e por e-mail',
 ]
 
 export function Pricing() {
+  const desconto = DESCONTOS_CARRINHO[0]
   return (
-    <section id="oferta" className="bg-algtrix-surface py-20 sm:py-24">
-      <div className="mx-auto max-w-pageWide px-4 sm:px-6 lg:px-10">
-        <Reveal>
-          <h2 className="max-w-[26ch] font-sans text-3xl font-semibold leading-tight tracking-tight text-algtrix-text sm:text-4xl">
-            Pague só pelo recorte que você precisa.
-          </h2>
-          <p className="mt-3 max-w-[60ch] text-algtrix-muted">
-            A partir de {formatarBRL(1990)}, sem mensalidade. O preço por empresa cai conforme o volume, e o valor
-            exato aparece antes do pagamento.
-          </p>
+    <Section id="oferta" tone="surface">
+      <SectionHeader
+        eyebrow="Preços"
+        title="Pague só pelo recorte que você precisa."
+        lead={`Listas a partir de ${formatarBRL(1990)}, sem mensalidade. O valor exato do seu recorte aparece antes do pagamento.`}
+        align="center"
+      />
+
+      <div className="mt-12 grid gap-6 lg:grid-cols-[1fr_1.05fr] lg:items-stretch">
+        <Reveal delay={0.05}>
+          <div className="flex h-full flex-col overflow-hidden rounded-lg border border-algtrix-border bg-algtrix-bg">
+            <div className="border-b border-algtrix-border px-6 py-4">
+              <p className="text-sm font-semibold text-algtrix-text">Exemplos de recorte</p>
+              <p className="mt-0.5 text-xs text-algtrix-dim">Valores de referência. O preço depende do tamanho da lista.</p>
+            </div>
+            <ul className="flex-1 divide-y divide-algtrix-border">
+              {EXEMPLOS.map((e) => (
+                <li key={e.empresas} className="flex items-center justify-between gap-4 px-6 py-4">
+                  <div>
+                    <p className="text-[15px] font-medium text-algtrix-text">{e.rotulo}</p>
+                    <p className="text-xs text-algtrix-dim">{e.nota}</p>
+                  </div>
+                  <p className="tabular whitespace-nowrap font-sans text-lg font-semibold text-algtrix-text">
+                    {formatarBRL(precoPorQuantidade(e.empresas))}
+                  </p>
+                </li>
+              ))}
+            </ul>
+            {desconto && (
+              <p className="border-t border-algtrix-border bg-algtrix-accentSoft/50 px-6 py-3 text-sm text-algtrix-text">
+                <strong>{desconto.percentual}% de desconto</strong> no total ao comprar {desconto.minItens} ou mais recortes.
+              </p>
+            )}
+          </div>
         </Reveal>
 
-        <div className="mt-10 grid gap-10 lg:grid-cols-2 lg:items-start">
-          <Reveal delay={0.05}>
-            <div className="overflow-hidden rounded-lg border border-algtrix-border bg-algtrix-bg">
-              <table className="w-full text-left text-sm">
-                <thead>
-                  <tr className="bg-algtrix-surface2 text-algtrix-dim">
-                    <th className="px-5 py-3 font-semibold">Empresas no recorte</th>
-                    <th className="px-5 py-3 text-right font-semibold">Preço</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {EXEMPLOS.map((n) => (
-                    <tr key={n} className="border-t border-algtrix-border">
-                      <td className="px-5 py-3 text-algtrix-text">{n === 2_000 ? 'Até 2.000' : formatarNumero(n)}</td>
-                      <td className="px-5 py-3 text-right font-semibold text-algtrix-text">
-                        {formatarBRL(precoPorQuantidade(n))}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-            <p className="mt-4 text-sm text-algtrix-muted">
-              Desconto automático no carrinho:{' '}
-              {[...DESCONTOS_CARRINHO]
-                .reverse()
-                .map((d) => `${d.percentual}% com ${d.minItens}${d.minItens === 5 ? ' ou mais' : ''} recortes`)
-                .join(', ')}
-              .
-            </p>
-          </Reveal>
-
-          <Reveal delay={0.1}>
-            <div className="rounded-lg border-2 border-algtrix-accent bg-algtrix-bg p-7 shadow-glow">
-              <p className="text-sm font-semibold uppercase tracking-wide text-algtrix-dim">O que está incluído</p>
-              <ul className="mt-4 space-y-3">
-                {INCLUIDO.map((item) => (
-                  <li key={item} className="flex items-start gap-3 text-[15px] text-algtrix-text">
-                    <CheckCircle size={18} weight="fill" className="mt-0.5 shrink-0 text-algtrix-accent" />
-                    {item}
-                  </li>
-                ))}
-              </ul>
-              <div className="mt-6 grid grid-cols-2 gap-3">
-                {DETAILS.map((detail) => (
-                  <div key={detail.label} className="rounded-md border border-algtrix-border bg-algtrix-surface p-3">
-                    <p className="text-[11px] font-medium uppercase tracking-wide text-algtrix-dim">{detail.label}</p>
-                    <p className="mt-1 text-sm font-semibold text-algtrix-text">{detail.value}</p>
-                  </div>
-                ))}
+        <Reveal delay={0.1}>
+          <div className="flex h-full flex-col rounded-lg border-2 border-algtrix-accent bg-algtrix-bg p-7 shadow-glow sm:p-8">
+            <p className="text-xs font-semibold uppercase tracking-[0.14em] text-algtrix-accent">O que está incluído</p>
+            <ul className="mt-5 space-y-3">
+              {INCLUIDO.map((item) => (
+                <li key={item} className="flex items-start gap-3 text-[15px] text-algtrix-text">
+                  <CheckCircle size={18} weight="fill" className="mt-0.5 shrink-0 text-algtrix-accent" />
+                  {item}
+                </li>
+              ))}
+            </ul>
+            <dl className="mt-6 grid grid-cols-2 gap-3 text-sm">
+              <div className="rounded-md border border-algtrix-border bg-algtrix-surface p-3">
+                <dt className="text-[11px] font-medium uppercase tracking-wide text-algtrix-dim">Cobertura</dt>
+                <dd className="mt-1 font-semibold text-algtrix-text">{formatarNumero(TOTAL_EMPRESAS)} empresas</dd>
               </div>
-              <ButtonLink
-                href="/montar-lista"
-                size="lg"
-                className="mt-7 w-full"
-                onClick={() => track(AnalyticsEvent.CheckoutStarted, { placement: 'pricing' })}
-              >
-                Montar minha lista
-              </ButtonLink>
-              <p className="mt-3 text-center text-xs text-algtrix-dim">
-                Fonte: Dados Abertos do CNPJ, Receita Federal. Competência {COMPETENCIA}.
-              </p>
-            </div>
-          </Reveal>
-        </div>
+              <div className="rounded-md border border-algtrix-border bg-algtrix-surface p-3">
+                <dt className="text-[11px] font-medium uppercase tracking-wide text-algtrix-dim">Atualização</dt>
+                <dd className="mt-1 font-semibold text-algtrix-text">Mensal · base {COMPETENCIA}</dd>
+              </div>
+            </dl>
+            <ButtonLink
+              href="/montar-lista"
+              size="lg"
+              className="mt-7 w-full"
+              onClick={() => track(AnalyticsEvent.CheckoutStarted, { placement: 'pricing' })}
+            >
+              Montar minha lista
+            </ButtonLink>
+            <p className="mt-3 text-center text-xs text-algtrix-dim">
+              Pix ou cartão de crédito · Fonte: Dados Abertos do CNPJ, Receita Federal
+            </p>
+          </div>
+        </Reveal>
       </div>
-    </section>
+    </Section>
   )
 }

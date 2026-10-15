@@ -10,7 +10,7 @@ export const product = {
     'Dados empresariais estruturados para criar listas segmentadas, identificar mercados e acelerar sua prospecção B2B.',
   deliverable: {
     // TODO(Elli): confirmar formato final de entrega (Excel, CSV, acesso via plataforma, etc.)
-    formats: ['Excel (.xlsx)', 'CSV'],
+    formats: ['Excel (.xlsx)', 'CSV', 'PDF (relatório)'],
     updateFrequency: 'Mensal (base atual: competência 2026-09)',
     coverage: 'Nacional, 27 UFs',
   },

@@ -3,115 +3,65 @@ import { Gauge } from '@phosphor-icons/react/dist/ssr/Gauge'
 import { Stack } from '@phosphor-icons/react/dist/ssr/Stack'
 import { ChartLineUp } from '@phosphor-icons/react/dist/ssr/ChartLineUp'
 import { ArrowsOutSimple } from '@phosphor-icons/react/dist/ssr/ArrowsOutSimple'
-import { Brain } from '@phosphor-icons/react/dist/ssr/Brain'
+import { ShieldCheck } from '@phosphor-icons/react/dist/ssr/ShieldCheck'
+import { Section, SectionHeader } from '@/components/ui/Section'
 import { Reveal } from '@/components/ui/Reveal'
-import { cn } from '@/lib/utils'
 import type { Icon } from '@phosphor-icons/react'
 
-const BENEFITS: {
-  icon: Icon
-  title: string
-  description: string
-  span: string
-  tone: 'accent' | 'violet' | 'plain'
-}[] = [
+const BENEFITS: { icon: Icon; title: string; description: string }[] = [
   {
     icon: Target,
-    title: 'Segmentação',
-    description: 'Encontre empresas por critérios relevantes ao seu mercado, do porte ao segmento de atuação.',
-    span: 'sm:col-span-2 sm:row-span-2',
-    tone: 'accent',
+    title: 'Segmentação exata',
+    description: 'Estado ou cidade, 21 segmentos de atividade, porte e opção de incluir ou excluir MEI.',
   },
   {
     icon: Gauge,
-    title: 'Produtividade',
-    description: 'Reduza o trabalho manual de pesquisa.',
-    span: 'sm:col-span-2 sm:row-span-1',
-    tone: 'plain',
+    title: 'Preço antes de pagar',
+    description: 'A quantidade de empresas e o valor do recorte aparecem na tela antes de qualquer cadastro.',
   },
   {
     icon: Stack,
-    title: 'Organização',
-    description: 'Trabalhe com dados estruturados.',
-    span: 'sm:col-span-1 sm:row-span-1',
-    tone: 'plain',
+    title: 'Dados estruturados',
+    description: 'CNPJ, razão social, CNAE, porte, endereço, telefones e e-mail em colunas prontas para uso.',
   },
   {
     icon: ChartLineUp,
-    title: 'Escala',
-    description: 'Crie listas maiores sem pesquisar empresa por empresa.',
-    span: 'sm:col-span-1 sm:row-span-1',
-    tone: 'plain',
+    title: 'Escala sem retrabalho',
+    description: 'De algumas centenas a milhões de empresas no mesmo formato, sem pesquisar uma a uma.',
   },
   {
     icon: ArrowsOutSimple,
-    title: 'Flexibilidade',
-    description: 'Utilize os dados em diferentes fluxos comerciais.',
-    span: 'sm:col-span-2 sm:row-span-1',
-    tone: 'violet',
+    title: 'Pronto para o seu fluxo',
+    description: 'CSV e Excel, compatíveis com planilhas, CRMs e ferramentas de automação comercial.',
   },
   {
-    icon: Brain,
-    title: 'Inteligência',
-    description: 'Transforme informação empresarial em contexto para prospecção.',
-    span: 'sm:col-span-2 sm:row-span-1',
-    tone: 'plain',
+    icon: ShieldCheck,
+    title: 'Origem e data claras',
+    description: 'Fonte oficial da Receita Federal e competência da base informada em cada arquivo.',
   },
 ]
 
-const toneClasses: Record<string, string> = {
-  accent: 'border-algtrix-borderAccent bg-gradient-to-br from-algtrix-accentSoft to-algtrix-surface',
-  violet: 'border-algtrix-border bg-algtrix-violetSoft',
-  plain: 'border-algtrix-border bg-algtrix-surface',
-}
-
 export function Benefits() {
   return (
-    <section className="bg-algtrix-bg py-20 sm:py-24">
-      <div className="mx-auto max-w-pageWide px-4 sm:px-6 lg:px-10">
-        <Reveal>
-          <h2 className="max-w-[26ch] font-sans text-3xl font-semibold leading-tight tracking-tight text-algtrix-text sm:text-4xl">
-            Uma base pensada para quem precisa encontrar empresas.
-          </h2>
-        </Reveal>
-
-        <div className="mt-10 grid gap-4 sm:grid-cols-4 sm:[grid-template-rows:repeat(3,minmax(0,1fr))]">
-          {BENEFITS.map((benefit, index) => (
-            <Reveal key={benefit.title} delay={index * 0.04} className={benefit.span}>
-              <div
-                className={cn(
-                  'relative flex h-full flex-col gap-4 overflow-hidden rounded-lg border p-6',
-                  toneClasses[benefit.tone],
-                )}
-              >
-                {benefit.tone === 'accent' && (
-                  <benefit.icon
-                    size={220}
-                    weight="duotone"
-                    className="pointer-events-none absolute -right-10 -top-10 text-algtrix-accent/[0.07]"
-                  />
-                )}
-                <benefit.icon
-                  size={benefit.tone === 'accent' ? 28 : 22}
-                  className="relative text-algtrix-accent"
-                  weight="duotone"
-                />
-                <div className={cn('relative', benefit.tone === 'accent' && 'mt-auto')}>
-                  <h3
-                    className={cn(
-                      'font-sans font-semibold text-algtrix-text',
-                      benefit.tone === 'accent' ? 'text-xl' : 'text-[15px]',
-                    )}
-                  >
-                    {benefit.title}
-                  </h3>
-                  <p className="mt-1.5 text-sm leading-relaxed text-algtrix-muted">{benefit.description}</p>
-                </div>
-              </div>
-            </Reveal>
-          ))}
-        </div>
+    <Section tone="bg">
+      <SectionHeader
+        eyebrow="Por que Algtrix B2B"
+        title="Uma base pensada para quem precisa encontrar empresas."
+        lead="Menos tempo organizando planilhas, mais tempo falando com clientes."
+      />
+      <div className="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+        {BENEFITS.map((b, i) => (
+          <Reveal key={b.title} delay={i * 0.04}>
+            <div className="group h-full rounded-lg border border-algtrix-border bg-algtrix-bg p-6 transition-shadow hover:shadow-soft">
+              <span className="flex h-10 w-10 items-center justify-center rounded-md bg-algtrix-accentSoft text-algtrix-accent">
+                <b.icon size={20} weight="duotone" />
+              </span>
+              <h3 className="mt-5 text-[17px] font-semibold text-algtrix-text">{b.title}</h3>
+              <p className="mt-2 text-[15px] leading-relaxed text-algtrix-muted">{b.description}</p>
+            </div>
+          </Reveal>
+        ))}
       </div>
-    </section>
+    </Section>
   )
 }
