@@ -303,12 +303,12 @@ function Carrinho({
   const [aceite, setAceite] = useState(false)
   const [metodo, setMetodo] = useState<'pix' | 'cartao'>('pix')
   const [lojaAtiva, setLojaAtiva] = useState<boolean | null>(null)
-  const [loja, setLoja] = useState<{ cartao: boolean; pix: string | null; beneficiario: { nome: string; chave: string } | null } | null>(null)
+  const [loja, setLoja] = useState<{ cartao: boolean; cartaoProvedor: string | null; pix: string | null; beneficiario: { nome: string; chave: string } | null } | null>(null)
   const [interesseOk, setInteresseOk] = useState(false)
 
   useEffect(() => {
     fetch('/api/loja/status', { cache: 'no-store' })
-      .then((r) => r.json() as Promise<{ vendasAtivas: boolean; cartao: boolean; pix: string | null; beneficiario: { nome: string; chave: string } | null }>)
+      .then((r) => r.json() as Promise<{ vendasAtivas: boolean; cartao: boolean; cartaoProvedor: string | null; pix: string | null; beneficiario: { nome: string; chave: string } | null }>)
       .then((d) => {
         setLojaAtiva(d.vendasAtivas)
         setLoja(d)
@@ -464,7 +464,7 @@ function Carrinho({
                 {(
                   [
                     { id: 'pix', titulo: 'Pix', detalhe: 'QR Code na tela. Liberação após a confirmação.', Icone: QrCode },
-                    { id: 'cartao', titulo: 'Cartão de crédito', detalhe: 'Em até 12x, ambiente seguro do Mercado Pago.', Icone: CreditCard },
+                    { id: 'cartao', titulo: 'Cartão de crédito', detalhe: loja?.cartaoProvedor === 'stripe' ? 'Parcelado, em ambiente seguro da Stripe.' : 'Em até 12x, ambiente seguro do Mercado Pago.', Icone: CreditCard },
                   ] as const
                 )
                   .filter((m) => m.id !== 'cartao' || loja?.cartao !== false)
@@ -552,7 +552,13 @@ function Carrinho({
           )}
           <ul className="mt-4 space-y-1.5 text-xs text-algtrix-muted">
             <li className="flex items-center gap-2">
-              <ShieldCheck size={14} className="text-algtrix-accent" /> {loja?.pix === 'estatico' && !loja?.cartao ? 'Pix direto para a conta da empresa' : 'Pagamento processado pelo Mercado Pago'}
+              <ShieldCheck size={14} className="text-algtrix-accent" /> {loja?.cartaoProvedor === 'stripe'
+                ? loja?.pix === 'estatico'
+                  ? 'Pix direto para a conta da empresa · cartão processado pela Stripe'
+                  : 'Cartão processado pela Stripe'
+                : loja?.pix === 'estatico' && !loja?.cartao
+                  ? 'Pix direto para a conta da empresa'
+                  : 'Pagamento processado pelo Mercado Pago'}
             </li>
             <li className="flex items-center gap-2">
               <ShieldCheck size={14} className="text-algtrix-accent" /> Download liberado automaticamente após a confirmação

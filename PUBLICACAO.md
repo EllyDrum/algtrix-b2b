@@ -54,12 +54,13 @@ R2_LOCAL_DIR=<pasta com base/2026-09/...> npx tsx --tsconfig tsconfig.json --env
 
 ## Formas de pagamento
 
-O site aceita duas configurações, que podem coexistir:
+O site aceita três configurações, que podem coexistir:
 
 | Modo | Variáveis | Como funciona |
 | --- | --- | --- |
 | **Pix na chave da empresa** | `PIX_CHAVE` (CNPJ), `PIX_NOME`, `PIX_CIDADE` | O site gera o QR Code e o Copia e Cola (padrão BR Code do Banco Central) com o valor e o número do pedido. O cliente paga direto na conta da empresa. A confirmação é manual: confira o extrato e clique em "Confirmar pagamento" em `/admin/pedidos` (chave `INTERNAL_SECRET`). Os arquivos são gerados em seguida. |
-| **Mercado Pago** | `MP_ACCESS_TOKEN`, `MP_WEBHOOK_SECRET` | Pix com confirmação automática (webhook) e cartão de crédito em até 12x. Quando configurado, o Pix passa a ser cobrado pelo Mercado Pago; o cartão só existe neste modo. |
+| **Stripe (cartão)** | `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET` | Cartão de crédito com parcelamento no Checkout hospedado da Stripe. Cadastre o webhook `https://<seu-dominio>/api/webhook/stripe` com os eventos `checkout.session.completed` e `checkout.session.expired`; a assinatura `Stripe-Signature` é validada e a sessão é consultada na API antes de liberar o pedido. A página do pedido também consulta a sessão quando o cliente volta da Stripe, sem esperar o webhook. |
+| **Mercado Pago** | `MP_ACCESS_TOKEN`, `MP_WEBHOOK_SECRET` | Pix com confirmação automática (webhook) e cartão de crédito em até 12x. Quando configurado, o Pix passa a ser cobrado pelo Mercado Pago; no cartão, a Stripe prevalece se as duas estiverem configuradas. |
 
 Para a loja aceitar pedidos é preciso: a entrega configurada (R2 + `ORDER_TOKEN_SECRET` + `INTERNAL_SECRET`) e ao menos um dos modos acima.
 

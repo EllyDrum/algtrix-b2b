@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server'
 import { lerPedido, tokenValido } from '@/lib/server/pedidos'
 import { linkDownload } from '@/lib/server/r2'
 import { statusLoja } from '@/lib/server/config'
+import { sincronizarStripe } from '@/lib/server/stripe-sync'
 
 export const dynamic = 'force-dynamic'
 
@@ -9,8 +10,9 @@ export const dynamic = 'force-dynamic'
 export async function GET(request: Request, { params }: { params: { id: string } }) {
   const token = new URL(request.url).searchParams.get('t')
   if (!tokenValido(params.id, token)) return NextResponse.json({ error: 'Link inválido' }, { status: 404 })
-  const pedido = await lerPedido(params.id)
+  let pedido = await lerPedido(params.id)
   if (!pedido) return NextResponse.json({ error: 'Pedido não encontrado' }, { status: 404 })
+  pedido = await sincronizarStripe(pedido)
 
   const arquivos = await Promise.all(
     pedido.arquivos.map(async (a) => ({

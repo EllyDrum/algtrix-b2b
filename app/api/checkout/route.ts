@@ -8,6 +8,7 @@ import { enviarEmailPagamentoPendente } from '@/lib/server/email'
 import { municipiosDosItens } from '@/lib/server/municipios'
 import { statusLoja } from '@/lib/server/config'
 import { criarPixEstatico } from '@/lib/payments/pix-brcode'
+import { criarSessaoCheckout } from '@/lib/payments/stripe'
 
 export const dynamic = 'force-dynamic'
 
@@ -19,7 +20,8 @@ const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/
  *
  * Formas de pagamento:
  * - pix: QR Code gerado na hora e exibido na página do pedido (Checkout Transparente);
- * - cartao: redireciona para o Checkout Pro do Mercado Pago, restrito a cartão de crédito.
+ * - cartao: redireciona para o Checkout da Stripe (parcelado) ou, sem Stripe, para o
+ *   Checkout Pro do Mercado Pago restrito a cartão de crédito.
  */
 export async function POST(request: Request) {
   const corpo = (await request.json().catch(() => null)) as {
@@ -44,7 +46,7 @@ export async function POST(request: Request) {
   if (corpo?.aceite !== true) {
     return NextResponse.json({ error: 'É preciso aceitar os termos de uso e a política de privacidade.' }, { status: 400 })
   }
-  const metodo: 'pix' | 'cartao' = corpo?.metodo === 'cartao' && loja.cartao ? 'cartao' : 'pix'
+  const metodo: 'pix' | 'cartao' = corpo?.metodo === 'cartao' && loja.cartao ? 'cartao' : loja.pix || pagamentoSimuladoPermitido() ? 'pix' : 'cartao'
   const documento = (corpo?.documento ?? '').replace(/\D/g, '')
   if (documento && documento.length !== 11 && documento.length !== 14) {
     return NextResponse.json({ error: 'CPF ou CNPJ inválido.' }, { status: 400 })
@@ -99,6 +101,24 @@ export async function POST(request: Request) {
       await salvarPedido(pedido)
       await enviarEmailPagamentoPendente(pedido, linkPedido).catch(() => false)
       return NextResponse.json({ pedidoId: pedido.id, checkoutUrl: linkPedido })
+    }
+
+    if (loja.cartaoProvedor === 'stripe') {
+      const sessao = await criarSessaoCheckout({
+        pedidoId: pedido.id,
+        email,
+        itens: cotacao.itens.map((item, i) => ({
+          id: `${pedido.id}-${i + 1}`,
+          titulo: `Lista de empresas: ${item.descricao}`,
+          precoCentavos: item.precoCentavos,
+        })),
+        descontoCentavos: cotacao.descontoCentavos,
+        urlRetorno: linkPedido,
+      })
+      pedido.pagamento = { provedor: 'stripe', id: sessao.id, status: 'pending' }
+      await salvarPedido(pedido)
+      await enviarEmailPagamentoPendente(pedido, linkPedido).catch(() => false)
+      return NextResponse.json({ pedidoId: pedido.id, checkoutUrl: sessao.url })
     }
 
     const preferencia = await criarPreferencia({

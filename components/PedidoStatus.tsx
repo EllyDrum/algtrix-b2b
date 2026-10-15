@@ -103,7 +103,12 @@ export function PedidoStatus({ id, token }: { id: string; token: string }) {
           titulo: 'Aguardando o pagamento',
           detalhe: 'Pague pelo QR Code abaixo. Assim que o recebimento for confirmado, os arquivos aparecem nesta página e o link chega por e-mail.',
         }
-      : TEXTO[pedido.status]
+      : pedido.status === 'aguardando_pagamento' && pedido.metodo === 'cartao'
+        ? {
+            titulo: 'Aguardando a confirmação do cartão',
+            detalhe: 'Se você ainda não concluiu o pagamento, volte à página de pagamento. A confirmação costuma levar alguns segundos e esta página atualiza sozinha.',
+          }
+        : TEXTO[pedido.status]
   const pronto = pedido.status === 'concluido'
 
   return (
