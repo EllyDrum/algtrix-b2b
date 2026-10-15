@@ -135,7 +135,7 @@ export function PedidoStatus({ id, token }: { id: string; token: string }) {
         <button
           type="button"
           onClick={novoPix}
-          className="mt-6 rounded-md bg-algtrix-accent px-5 py-3 text-sm font-semibold text-algtrix-bg hover:bg-algtrix-accentHover"
+          className="mt-6 rounded-md bg-algtrix-cta px-5 py-3 text-sm font-semibold text-algtrix-ctaText hover:bg-algtrix-ctaHover"
         >
           Pagar com Pix agora
         </button>
@@ -165,14 +165,14 @@ export function PedidoStatus({ id, token }: { id: string; token: string }) {
                       <a
                         key={d.formato}
                         href={d.url ?? '#'}
-                        className="flex items-center gap-3 rounded-md bg-algtrix-accent px-4 py-3 text-white transition-colors hover:bg-algtrix-accentHover"
+                        className="flex items-center gap-3 rounded-md bg-algtrix-cta px-4 py-3 text-algtrix-ctaText transition-colors hover:bg-algtrix-ctaHover"
                       >
                         {d.formato === 'XLSX' ? <FileXls size={26} weight="duotone" /> : <FilePdf size={26} weight="duotone" />}
                         <span className="min-w-0">
                           <span className="block text-sm font-semibold">
                             {d.formato === 'XLSX' ? 'Baixar Excel' : 'Baixar PDF'}
                           </span>
-                          <span className="block text-xs text-white/80">
+                          <span className="block text-xs text-algtrix-ctaText/75">
                             {d.formato === 'XLSX' ? 'Planilha com resumo e lista completa' : 'Relatório formatado'} · {tamanho(d.bytes)}
                           </span>
                         </span>
@@ -253,7 +253,7 @@ function BlocoPix({
         <button
           type="button"
           onClick={onNovo}
-          className="mt-3 rounded-md bg-algtrix-accent px-5 py-3 text-sm font-semibold text-algtrix-bg hover:bg-algtrix-accentHover"
+          className="mt-3 rounded-md bg-algtrix-cta px-5 py-3 text-sm font-semibold text-algtrix-ctaText hover:bg-algtrix-ctaHover"
         >
           Gerar novo Pix
         </button>
@@ -302,7 +302,7 @@ function BlocoPix({
           <button
             type="button"
             onClick={copiar}
-            className="mt-5 flex w-full items-center justify-center gap-2 rounded-md bg-algtrix-accent px-4 py-3 text-sm font-semibold text-white hover:bg-algtrix-accentHover"
+            className="mt-5 flex w-full items-center justify-center gap-2 rounded-md bg-algtrix-cta px-4 py-3 text-sm font-semibold text-algtrix-ctaText hover:bg-algtrix-ctaHover"
           >
             {copiado ? 'Código copiado' : 'Copiar código Pix Copia e Cola'}
           </button>

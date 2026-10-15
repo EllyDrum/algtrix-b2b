@@ -154,7 +154,7 @@ function FullPanel() {
       <div className="px-4 pb-4 sm:px-5">
         <button
           onClick={handleSearch}
-          className="flex w-full items-center justify-center gap-2 rounded-md bg-algtrix-accent px-4 py-3 text-sm font-semibold text-algtrix-bg transition-colors hover:bg-algtrix-accentHover sm:w-auto sm:px-6"
+          className="flex w-full items-center justify-center gap-2 rounded-md bg-algtrix-cta px-4 py-3 text-sm font-semibold text-algtrix-ctaText transition-colors hover:bg-algtrix-ctaHover sm:w-auto sm:px-6"
         >
           <MagnifyingGlass size={16} weight="bold" />
           Encontrar empresas

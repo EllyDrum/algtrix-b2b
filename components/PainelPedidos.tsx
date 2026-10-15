@@ -152,7 +152,7 @@ export function PainelPedidos() {
                         type="button"
                         disabled={ocupado === p.id}
                         onClick={() => confirmar(p.id)}
-                        className="whitespace-nowrap rounded-md bg-algtrix-accent px-3 py-2 text-xs font-semibold text-white disabled:opacity-50"
+                        className="whitespace-nowrap rounded-md bg-algtrix-cta px-3 py-2 text-xs font-semibold text-algtrix-ctaText disabled:opacity-50"
                       >
                         {p.status === 'erro' ? 'Gerar novamente' : 'Confirmar pagamento'}
                       </button>

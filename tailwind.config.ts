@@ -25,6 +25,9 @@ const config: Config = {
           accentHover: 'var(--algtrix-accent-hover)',
           accentSoft: 'var(--algtrix-accent-soft)',
           accentStrong: 'var(--algtrix-accent-strong)',
+          cta: 'var(--algtrix-cta)',
+          ctaHover: 'var(--algtrix-cta-hover)',
+          ctaText: 'var(--algtrix-cta-text)',
           violet: 'var(--algtrix-violet)',
           violetSoft: 'var(--algtrix-violet-soft)',
           amber: 'var(--algtrix-amber)',
@@ -67,7 +70,7 @@ const config: Config = {
         soft: '0 1px 2px rgba(24,18,43,0.05), 0 8px 24px -16px rgba(24,18,43,0.12)',
         lift: '0 2px 4px rgba(24,18,43,0.05), 0 24px 48px -20px rgba(24,18,43,0.2)',
         'card-dark': '0 20px 44px -16px rgba(24,18,43,0.22)',
-        glow: '0 0 0 1px rgba(15,138,151,0.22), 0 12px 28px -14px rgba(15,138,151,0.22)',
+        glow: '0 0 0 1px rgba(65,183,196,0.35), 0 14px 30px -12px rgba(65,183,196,0.55)',
       },
       borderRadius: {
         sm: '8px',

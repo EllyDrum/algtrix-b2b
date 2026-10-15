@@ -246,7 +246,7 @@ export function ListaBuilder() {
             type="button"
             disabled={!empresas || portesVazios || carregandoCidade}
             onClick={adicionar}
-            className="mt-5 flex w-full items-center justify-center gap-2 rounded-md bg-algtrix-accent px-5 py-3.5 text-[15px] font-semibold text-algtrix-bg transition-colors hover:bg-algtrix-accentHover disabled:opacity-50"
+            className="mt-5 flex w-full items-center justify-center gap-2 rounded-md bg-algtrix-cta px-5 py-3.5 text-[15px] font-semibold text-algtrix-ctaText transition-colors hover:bg-algtrix-ctaHover disabled:opacity-50"
           >
             <ShoppingCart size={18} weight="bold" />
             Adicionar ao carrinho
@@ -449,7 +449,7 @@ function Carrinho({
                 <button
                   type="submit"
                   disabled={enviando}
-                  className="flex w-full items-center justify-center gap-2 rounded-md bg-algtrix-accent px-5 py-3.5 text-[15px] font-semibold text-algtrix-bg hover:bg-algtrix-accentHover disabled:opacity-50"
+                  className="flex w-full items-center justify-center gap-2 rounded-md bg-algtrix-cta px-5 py-3.5 text-[15px] font-semibold text-algtrix-ctaText hover:bg-algtrix-ctaHover disabled:opacity-50"
                 >
                   {enviando ? <CircleNotch size={18} className="animate-spin" /> : <CheckCircle size={18} weight="bold" />}
                   Quero ser avisado
@@ -543,7 +543,7 @@ function Carrinho({
             <button
               type="submit"
               disabled={enviando || !aceite}
-              className="flex w-full items-center justify-center gap-2 rounded-md bg-algtrix-accent px-5 py-3.5 text-[15px] font-semibold text-algtrix-bg hover:bg-algtrix-accentHover disabled:opacity-50"
+              className="flex w-full items-center justify-center gap-2 rounded-md bg-algtrix-cta px-5 py-3.5 text-[15px] font-semibold text-algtrix-ctaText hover:bg-algtrix-ctaHover disabled:opacity-50"
             >
               {enviando ? <CircleNotch size={18} className="animate-spin" /> : <CheckCircle size={18} weight="bold" />}
               {metodo === 'pix' ? `Gerar Pix de ${formatarBRL(cotacao.totalCentavos)}` : `Pagar ${formatarBRL(cotacao.totalCentavos)} com cartão`}

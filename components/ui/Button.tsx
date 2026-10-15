@@ -13,7 +13,7 @@ interface CommonProps {
 }
 
 const variantClasses: Record<Variant, string> = {
-  primary: 'bg-algtrix-accent text-algtrix-bg hover:bg-algtrix-accentHover shadow-glow',
+  primary: 'bg-algtrix-cta text-algtrix-ctaText hover:bg-algtrix-ctaHover shadow-glow',
   secondary:
     'bg-transparent text-algtrix-text border border-algtrix-borderStrong hover:border-algtrix-accent/50 hover:bg-black/[0.03]',
   ghost: 'bg-transparent text-algtrix-muted hover:text-algtrix-text hover:bg-black/[0.04]',

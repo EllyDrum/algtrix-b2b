@@ -28,6 +28,11 @@
   --algtrix-accent-soft: rgba(15, 138, 151, 0.1);
   --algtrix-accent-strong: #41b7c4;
 
+  /* Botões de ação: mesmo ciano e texto escuro do algtrix.com.br */
+  --algtrix-cta: #41b7c4;
+  --algtrix-cta-hover: #2ea4b1;
+  --algtrix-cta-text: #170f2b;
+
   --algtrix-violet: #5c4990;
   --algtrix-violet-soft: rgba(92, 73, 144, 0.1);
   --algtrix-amber: #b5661a;
