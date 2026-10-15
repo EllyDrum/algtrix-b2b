@@ -13,7 +13,7 @@ export const faqItems: FaqItem[] = [
   {
     question: 'O que está incluído na oferta?',
     answer:
-      'Cada recorte que você monta (estado ou cidade, segmentos, porte e opção de MEI) vira um arquivo ZIP com a lista em CSV, a mesma lista em Excel (até 100 mil empresas), um relatório em PDF e um arquivo LEIA-ME com a data da base.',
+      'Cada recorte que você monta (estado ou cidade, segmentos, porte e opção de MEI) vira um arquivo ZIP com a lista em CSV, a mesma lista em Excel (até 1 milhão de empresas), um relatório em PDF e um arquivo LEIA-ME com a data da base.',
   },
   {
     question: 'Quais dados estão disponíveis?',
@@ -23,7 +23,7 @@ export const faqItems: FaqItem[] = [
   {
     question: 'Qual é o formato dos arquivos?',
     answer:
-      'Um arquivo ZIP com a lista em CSV (abre direto no Excel), em Excel (.xlsx, com aba de resumo, para recortes de até 100 mil empresas) e um relatório em PDF formatado com resumo por segmento e porte.',
+      'Um arquivo ZIP com a lista em CSV (abre direto no Excel), em Excel (.xlsx, com aba de resumo, para recortes de até 1 milhão de empresas) e um relatório em PDF formatado com resumo por segmento e porte.',
   },
   {
     question: 'Como e quando eu recebo o acesso?',

@@ -4,13 +4,18 @@ import { Zip, ZipDeflate, ZipPassThrough, strToU8 } from 'fflate'
 import ExcelJS from 'exceljs'
 import PDFDocument from 'pdfkit'
 import { PassThrough } from 'node:stream'
+import { createReadStream, promises as fsp } from 'node:fs'
+import os from 'node:os'
+import path from 'node:path'
 import { COMPETENCIA, PARTES_UF, PORTES, secaoDoCnae, UF_NOME, SECAO_NOME } from '../catalog'
 import type { ItemRecorte } from '../pricing-engine'
 import { headObject, MultipartUpload, parquetBufferR2, putObject } from './r2'
 import type { ArquivoEntregue } from './pedidos'
 
-/** Acima deste volume o arquivo é entregue só em CSV (o XLSX fica pesado e o Excel limita 1.048.576 linhas). */
+/** Até este volume o Excel é montado em memória e também vai dentro do ZIP. */
 export const LIMITE_XLSX = 100_000
+/** Acima de LIMITE_XLSX o Excel é gravado em streaming direto em arquivo, até o limite de linhas do Excel. */
+export const LIMITE_XLSX_GRANDE = 1_000_000
 /** O PDF traz a lista completa até este volume; acima, traz o resumo e as primeiras linhas. */
 export const LIMITE_PDF_LINHAS = 5_000
 
@@ -99,7 +104,7 @@ export function nomeArquivoItem(pedidoId: string, indice: number, item: ItemReco
   return `algtrix_${local}_${slug(segmento)}_${pedidoId}_item${indice + 1}_${carimbo}.zip`
 }
 
-function leiaMe(item: ItemRecorte, pedidoId: string, linhas: number, comXlsx: boolean): string {
+function leiaMe(item: ItemRecorte, pedidoId: string, linhas: number, comXlsx: boolean, xlsxSeparado = false): string {
   return [
     'ALGTRIX B2B - LISTA DE EMPRESAS',
     '',
@@ -113,7 +118,11 @@ function leiaMe(item: ItemRecorte, pedidoId: string, linhas: number, comXlsx: bo
     '',
     'Arquivos:',
     '- empresas.csv: separado por ponto e vírgula, codificação UTF-8. Abre direto no Excel.',
-    comXlsx ? '- empresas.xlsx: mesma lista em Excel, com aba de resumo por segmento e porte.' : '- Formato Excel não incluído: o volume excede o limite recomendado; use o CSV.',
+    comXlsx
+      ? '- empresas.xlsx: mesma lista em Excel, com aba de resumo por segmento e porte.'
+      : xlsxSeparado
+        ? '- Excel: disponível como download separado na página do pedido (arquivo grande, não incluído neste ZIP).'
+        : '- Formato Excel não incluído: o volume excede o limite de linhas do Excel; use o CSV.',
     linhas <= LIMITE_PDF_LINHAS
       ? '- relatorio.pdf: relatório formatado com resumo e a lista completa.'
       : '- relatorio.pdf: relatório formatado com resumo e as primeiras ' + LIMITE_PDF_LINHAS.toLocaleString('pt-BR') + ' empresas.',
@@ -144,6 +153,9 @@ export async function gerarArquivoItem(
   const nomeArquivo = nomeArquivoItem(pedidoId, indice, item)
   const chave = `pedidos/${pedidoId}/${nomeArquivo}`
   const comXlsx = empresasPrevistas <= LIMITE_XLSX
+  const xlsxGrande = !comXlsx && empresasPrevistas <= LIMITE_XLSX_GRANDE
+  const xlsxTmp = xlsxGrande ? path.join(os.tmpdir(), `${pedidoId}-item${indice + 1}.xlsx`) : ''
+  const planilha = xlsxGrande ? iniciarXlsxGrande(xlsxTmp) : null
   const secoes = new Set(item.secoes)
   const portes = new Set(
     (item.portes.length ? item.portes : PORTES.map((p) => p.codigo)).map(
@@ -211,6 +223,7 @@ export async function gerarArquivoItem(
           const campos = transformar(l, secao, mei)
           bloco += csvLinha(campos)
           if (comXlsx) linhasXlsx.push(campos)
+          else if (planilha) planilha.linha(campos)
           if (linhasPdf.length < LIMITE_PDF_LINHAS) linhasPdf.push(campos)
           resumoSegmento.set(campos[7]!, (resumoSegmento.get(campos[7]!) ?? 0) + 1)
           resumoPorte.set(mei ? 'MEI' : campos[9]!, (resumoPorte.get(mei ? 'MEI' : campos[9]!) ?? 0) + 1)
@@ -237,6 +250,12 @@ export async function gerarArquivoItem(
     // Excel e PDF são gravados como arquivos próprios (download direto) e também dentro do ZIP.
     const base = chave.replace(/\.zip$/, '')
     const downloads: NonNullable<ArquivoEntregue['downloads']> = []
+    if (planilha) {
+      await planilha.concluir(resumo)
+      const bytesXlsx = await enviarArquivo(xlsxTmp, `${base}.xlsx`, 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+      await fsp.unlink(xlsxTmp).catch(() => undefined)
+      downloads.push({ formato: 'XLSX', chave: `${base}.xlsx`, nomeArquivo: nomeArquivo.replace(/\.zip$/, '.xlsx'), bytes: bytesXlsx })
+    }
     if (comXlsx) {
       const xlsx = await gerarXlsx(linhasXlsx, resumo)
       await putObject(`${base}.xlsx`, xlsx, 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
@@ -257,7 +276,7 @@ export async function gerarArquivoItem(
 
     const leia = new ZipDeflate('LEIA-ME.txt', { level: 6 })
     zip.add(leia)
-    leia.push(strToU8(leiaMe(item, pedidoId, total, comXlsx)), true)
+    leia.push(strToU8(leiaMe(item, pedidoId, total, comXlsx, Boolean(planilha))), true)
     zip.end()
     await descarregar()
     const bytes = await upload.concluir()
@@ -268,11 +287,12 @@ export async function gerarArquivoItem(
       nomeArquivo,
       bytes,
       linhas: total,
-      formatos: comXlsx ? ['CSV', 'XLSX', 'PDF'] : ['CSV', 'PDF'],
+      formatos: comXlsx || planilha ? ['CSV', 'XLSX', 'PDF'] : ['CSV', 'PDF'],
       downloads: [...downloads, { formato: 'CSV', chave, nomeArquivo, bytes }],
     }
   } catch (e) {
     await upload.abortar()
+    if (xlsxTmp) await fsp.unlink(xlsxTmp).catch(() => undefined)
     throw e
   }
 }
@@ -332,19 +352,7 @@ function descricaoRecorte(r: Resumo): string[] {
 
 const LARGURAS_XLSX = [20, 40, 30, 14, 12, 42, 30, 32, 12, 9, 7, 16, 36, 10, 18, 24, 11, 24, 6, 16, 16, 34, 12]
 
-async function gerarXlsx(linhas: string[][], resumo: Resumo): Promise<Uint8Array> {
-  const stream = new PassThrough()
-  const partes: Buffer[] = []
-  stream.on('data', (c: Buffer) => partes.push(c))
-  const fim = new Promise<void>((resolve, reject) => {
-    stream.on('end', resolve)
-    stream.on('error', reject)
-  })
-  const wb = new ExcelJS.stream.xlsx.WorkbookWriter({ stream, useSharedStrings: false, useStyles: true })
-  wb.creator = 'Algtrix B2B'
-
-  // Aba 1: resumo do recorte
-  const wr = wb.addWorksheet('Resumo')
+function escreverResumo(wr: ExcelJS.Worksheet, resumo: Resumo) {
   wr.columns = [{ width: 44 }, { width: 18 }]
   const titulo = wr.addRow(['Algtrix B2B - Lista de empresas'])
   titulo.font = { bold: true, size: 16, color: { argb: 'FF1C1533' } }
@@ -371,6 +379,22 @@ async function gerarXlsx(linhas: string[][], resumo: Resumo): Promise<Uint8Array
   bloco('Por segmento', resumo.segmentos)
   bloco('Por porte', resumo.portes)
   if (resumo.cidades.length > 1) bloco('Principais cidades', resumo.cidades)
+}
+
+async function gerarXlsx(linhas: string[][], resumo: Resumo): Promise<Uint8Array> {
+  const stream = new PassThrough()
+  const partes: Buffer[] = []
+  stream.on('data', (c: Buffer) => partes.push(c))
+  const fim = new Promise<void>((resolve, reject) => {
+    stream.on('end', resolve)
+    stream.on('error', reject)
+  })
+  const wb = new ExcelJS.stream.xlsx.WorkbookWriter({ stream, useSharedStrings: false, useStyles: true })
+  wb.creator = 'Algtrix B2B'
+
+  // Aba 1: resumo do recorte
+  const wr = wb.addWorksheet('Resumo')
+  escreverResumo(wr, resumo)
   await wr.commit()
 
   // Aba 2: empresas
@@ -394,6 +418,57 @@ async function gerarXlsx(linhas: string[][], resumo: Resumo): Promise<Uint8Array
   await wb.commit()
   await fim
   return new Uint8Array(Buffer.concat(partes))
+}
+
+
+/**
+ * Excel para listas grandes: as linhas são gravadas em streaming direto num arquivo
+ * temporário enquanto a base é lida, sem acumular a lista em memória. A aba
+ * "Empresas" vem primeiro e a aba "Resumo" é adicionada no final.
+ */
+function iniciarXlsxGrande(arquivo: string) {
+  const wb = new ExcelJS.stream.xlsx.WorkbookWriter({ filename: arquivo, useSharedStrings: false, useStyles: true })
+  wb.creator = 'Algtrix B2B'
+  const ws = wb.addWorksheet('Empresas', { views: [{ state: 'frozen', ySplit: 1 }] })
+  ws.columns = CABECALHO.map((h, i) => ({ header: h, width: LARGURAS_XLSX[i] ?? 16 }))
+  const cab = ws.getRow(1)
+  cab.font = { bold: true, color: { argb: 'FFFFFFFF' } }
+  cab.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF1C1533' } }
+  cab.alignment = { vertical: 'middle' }
+  cab.height = 22
+  cab.commit()
+  let n = 0
+  return {
+    linha(campos: string[]) {
+      const r = ws.addRow(campos)
+      if (n % 2 === 1) r.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFF7F6FB' } }
+      r.commit()
+      n++
+    },
+    async concluir(resumo: Resumo) {
+      ws.autoFilter = { from: 'A1', to: { row: 1, column: CABECALHO.length } }
+      await ws.commit()
+      const wr = wb.addWorksheet('Resumo')
+      escreverResumo(wr, resumo)
+      await wr.commit()
+      await wb.commit()
+    },
+  }
+}
+
+/** Envia um arquivo local ao R2 em partes (multipart), sem carregá-lo inteiro em memória. */
+async function enviarArquivo(arquivo: string, chave: string, contentType: string): Promise<number> {
+  const up = new MultipartUpload(chave, contentType)
+  await up.iniciar()
+  try {
+    for await (const pedaco of createReadStream(arquivo, { highWaterMark: 4 * 1024 * 1024 })) {
+      await up.escrever(new Uint8Array(pedaco as Buffer))
+    }
+    return await up.concluir()
+  } catch (e) {
+    await up.abortar()
+    throw e
+  }
 }
 
 const COLUNAS_PDF: { idx: number; titulo: string; largura: number }[] = [

@@ -19,7 +19,7 @@ const EXEMPLOS: { rotulo: string; empresas: number; nota: string }[] = [
 
 const INCLUIDO = [
   'Recorte exato: estado ou cidade, segmentos e porte',
-  'Arquivo ZIP com CSV, Excel (até 100 mil empresas) e relatório em PDF',
+  'Downloads em Excel (até 1 milhão de empresas), CSV e relatório em PDF',
   'CNPJ, razão social, CNAE, porte, endereço, telefones e e-mail',
   'Download imediato após Pix ou cartão aprovado',
   'Link de download permanente, na página do pedido e por e-mail',

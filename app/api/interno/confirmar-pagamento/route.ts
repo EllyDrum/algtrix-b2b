@@ -11,9 +11,17 @@ export const dynamic = 'force-dynamic'
  */
 export async function POST(request: Request) {
   if (!chaveAdminValida(request)) return NextResponse.json({ error: 'Não autorizado' }, { status: 401 })
-  const { pedidoId } = (await request.json().catch(() => ({}))) as { pedidoId?: string }
+  const { pedidoId, refazer } = (await request.json().catch(() => ({}))) as { pedidoId?: string; refazer?: boolean }
   const pedido = pedidoId ? await lerPedido(pedidoId) : null
   if (!pedido) return NextResponse.json({ error: 'Pedido não encontrado' }, { status: 404 })
+  // Refazer um pedido já concluído (ex.: gerar de novo com formatos adicionais).
+  if (refazer && pedido.status === 'concluido') {
+    pedido.arquivos = []
+    pedido.status = 'pago'
+    await salvarPedido(pedido)
+    await acionarGeracao(pedido.id)
+    return NextResponse.json({ ok: true, status: pedido.status })
+  }
   if (!['aguardando_pagamento', 'cancelado', 'erro'].includes(pedido.status)) {
     return NextResponse.json({ ok: true, status: pedido.status })
   }
