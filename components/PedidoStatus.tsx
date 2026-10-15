@@ -137,7 +137,7 @@ export function PedidoStatus({ id, token }: { id: string; token: string }) {
       )}
 
       <p className="mt-6 text-xs text-algtrix-dim">
-        Pedido {pedido.id} · {pedido.email} · base {pedido.competencia}
+        Pedido {pedido.id} · {pedido.email} · base atualizada
       </p>
 
       <ul className="mt-4 space-y-3">
@@ -151,7 +151,7 @@ export function PedidoStatus({ id, token }: { id: string; token: string }) {
               <p className="font-medium text-algtrix-text">{item.descricao}</p>
               <p className="mt-0.5 text-sm text-algtrix-dim">
                 {formatarNumero(arq?.linhas ?? item.empresas)} empresas
-                {arq ? ` · base ${pedido.competencia}` : ''}
+                {arq ? ' · base atualizada' : ''}
               </p>
               {downloads.length > 0 ? (
                 <div className="mt-4">

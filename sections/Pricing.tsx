@@ -4,7 +4,7 @@ import { CheckCircle } from '@phosphor-icons/react/dist/ssr/CheckCircle'
 import { Section, SectionHeader } from '@/components/ui/Section'
 import { Reveal } from '@/components/ui/Reveal'
 import { ButtonLink } from '@/components/ui/Button'
-import { COMPETENCIA, TOTAL_EMPRESAS } from '@/lib/catalog'
+import { TOTAL_EMPRESAS } from '@/lib/catalog'
 import { DESCONTOS_CARRINHO, formatarBRL, formatarNumero, precoPorQuantidade } from '@/lib/pricing-engine'
 import { track } from '@/lib/analytics'
 import { AnalyticsEvent } from '@/config/analytics'
@@ -82,7 +82,7 @@ export function Pricing() {
               </div>
               <div className="rounded-md border border-algtrix-border bg-algtrix-surface p-3">
                 <dt className="text-[11px] font-medium uppercase tracking-wide text-algtrix-dim">Atualização</dt>
-                <dd className="mt-1 font-semibold text-algtrix-text">Mensal · base {COMPETENCIA}</dd>
+                <dd className="mt-1 font-semibold text-algtrix-text">Base atualizada</dd>
               </div>
             </dl>
             <ButtonLink

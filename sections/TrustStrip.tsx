@@ -1,15 +1,11 @@
-import { COMPETENCIA, TOTAL_EMPRESAS } from '@/lib/catalog'
+import { TOTAL_EMPRESAS } from '@/lib/catalog'
 import { formatarNumero } from '@/lib/pricing-engine'
-
-const [ano, mes] = COMPETENCIA.split('-')
-const MESES = ['jan', 'fev', 'mar', 'abr', 'mai', 'jun', 'jul', 'ago', 'set', 'out', 'nov', 'dez']
-const competenciaLegivel = `${MESES[Number(mes) - 1]}/${ano}`
 
 const STATS = [
   { valor: formatarNumero(TOTAL_EMPRESAS), rotulo: 'empresas ativas' },
   { valor: '27', rotulo: 'estados cobertos' },
   { valor: '5.572', rotulo: 'cidades disponíveis' },
-  { valor: competenciaLegivel, rotulo: 'base atualizada' },
+  { valor: 'Receita Federal', rotulo: 'base atualizada' },
 ]
 
 /** Faixa de números reais da base, logo abaixo do hero. */

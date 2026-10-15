@@ -37,7 +37,7 @@ const BENEFITS: { icon: Icon; title: string; description: string }[] = [
   {
     icon: ShieldCheck,
     title: 'Origem e data claras',
-    description: 'Fonte oficial da Receita Federal e competência da base informada em cada arquivo.',
+    description: 'Fonte oficial da Receita Federal e base atualizada, com origem informada em cada arquivo.',
   },
 ]
 

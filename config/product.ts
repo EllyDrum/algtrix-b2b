@@ -11,7 +11,7 @@ export const product = {
   deliverable: {
     // TODO(Elli): confirmar formato final de entrega (Excel, CSV, acesso via plataforma, etc.)
     formats: ['Excel (.xlsx)', 'CSV', 'PDF (relatório)'],
-    updateFrequency: 'Mensal (base atual: competência 2026-09)',
+    updateFrequency: 'Base atualizada',
     coverage: 'Nacional, 27 UFs',
   },
   demoDisclaimer: 'Demonstração ilustrativa. Os dados exibidos abaixo são fictícios.',

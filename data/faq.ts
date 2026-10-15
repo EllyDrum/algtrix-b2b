@@ -38,7 +38,7 @@ export const faqItems: FaqItem[] = [
   {
     question: 'Os dados são atualizados?',
     answer:
-      'Sim, mensalmente, conforme a publicação dos Dados Abertos da Receita Federal. A base atual é da competência 2026-09, e essa data vem em cada arquivo.',
+      'Sim. A base é atualizada a partir dos Dados Abertos da Receita Federal, e a origem dos dados vem informada em cada arquivo.',
   },
   {
     question: 'Preciso saber programação ou SQL para usar?',

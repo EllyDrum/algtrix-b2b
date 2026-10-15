@@ -234,7 +234,7 @@ export function ListaBuilder() {
                 <strong className="text-algtrix-text">
                   {nomeMunicipio ? `${nomeMunicipio} (${uf})` : UFS.find((u) => u.sigla === uf)?.nome}
                 </strong>{' '}
-                · base {COMPETENCIA}
+                · base atualizada
               </p>
             </div>
             <div className="text-right">

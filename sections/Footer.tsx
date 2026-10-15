@@ -1,6 +1,5 @@
 import { Logo } from '@/components/Logo'
 import { brand } from '@/config/brand'
-import { COMPETENCIA } from '@/lib/catalog'
 
 const PRODUTO = [
   { href: '/montar-lista', label: 'Montar minha lista' },
@@ -23,8 +22,7 @@ export function Footer() {
           <div>
             <Logo />
             <p className="mt-4 max-w-[44ch] text-sm leading-relaxed text-algtrix-muted">
-              Listas de empresas com dados oficiais da Receita Federal, para prospecção B2B. Base atualizada
-              mensalmente (competência {COMPETENCIA}).
+              Listas de empresas com dados oficiais da Receita Federal, para prospecção B2B. Base atualizada.
             </p>
             <p className="mt-3 text-sm text-algtrix-muted">
               Contato:{' '}

@@ -27,7 +27,7 @@ const CABECALHO = [
   'CNPJ', 'Razão social', 'Nome fantasia', 'Data de abertura', 'CNAE principal', 'Descrição do CNAE principal',
   'CNAEs secundários', 'Segmento', 'Natureza jurídica', 'Porte', 'MEI', 'Capital social (R$)', 'Logradouro',
   'Número', 'Complemento', 'Bairro', 'CEP', 'Município', 'UF', 'Telefone 1', 'Telefone 2', 'E-mail',
-  'Competência da base',
+  'Fonte',
 ]
 
 const PORTE_NOME: Record<string, string> = { '01': 'ME', '03': 'EPP', '05': 'Demais' }
@@ -71,7 +71,7 @@ function transformar(l: Linha, secao: string, mei: boolean): string[] {
     telefone(l.ddd_1, l.telefone_1),
     telefone(l.ddd_2, l.telefone_2),
     (l.email ?? '').toLowerCase(),
-    l.competencia_receita ?? COMPETENCIA,
+    'Receita Federal',
   ]
 }
 
@@ -96,7 +96,7 @@ export function nomeArquivoItem(pedidoId: string, indice: number, item: ItemReco
   const local = item.municipio ? `${item.uf}-${slug(item.municipioNome ?? item.municipio)}` : item.uf
   const segmento = item.secoes.length ? item.secoes.join('') : 'todos-segmentos'
   const carimbo = new Date().toISOString().replace(/[-:]/g, '').slice(0, 15)
-  return `algtrix_${local}_${slug(segmento)}_${COMPETENCIA}_${pedidoId}_item${indice + 1}_${carimbo}.zip`
+  return `algtrix_${local}_${slug(segmento)}_${pedidoId}_item${indice + 1}_${carimbo}.zip`
 }
 
 function leiaMe(item: ItemRecorte, pedidoId: string, linhas: number, comXlsx: boolean): string {
@@ -109,7 +109,7 @@ function leiaMe(item: ItemRecorte, pedidoId: string, linhas: number, comXlsx: bo
     `Portes: ${item.portes.length ? item.portes.join(', ') : 'ME, EPP e Demais'}`,
     `MEI: ${item.incluirMei ? 'incluído' : 'não incluído'}`,
     `Empresas: ${linhas.toLocaleString('pt-BR')}`,
-    `Competência da base: ${COMPETENCIA} (Dados Abertos do CNPJ - Receita Federal do Brasil)`,
+    'Base: Dados Abertos do CNPJ - Receita Federal do Brasil (base atualizada)',
     '',
     'Arquivos:',
     '- empresas.csv: separado por ponto e vírgula, codificação UTF-8. Abre direto no Excel.',
@@ -325,7 +325,7 @@ function descricaoRecorte(r: Resumo): string[] {
     `Segmentos: ${r.item.secoes.length ? r.item.secoes.map((s) => SECAO_NOME[s]).join('; ') : 'Todos'}`,
     `Portes: ${r.item.portes.length ? r.item.portes.join(', ') : 'ME, EPP e Demais'}${r.item.incluirMei ? ' + MEI' : ' (sem MEI)'}`,
     `Empresas: ${r.total.toLocaleString('pt-BR')}`,
-    `Base: competência ${COMPETENCIA} (Dados Abertos do CNPJ, Receita Federal)`,
+    'Base: Dados Abertos do CNPJ, Receita Federal (base atualizada)',
     `Pedido: ${r.pedidoId}`,
   ]
 }
@@ -504,7 +504,7 @@ async function gerarPdf(linhas: string[][], resumo: Resumo): Promise<Uint8Array>
     doc.switchToPage(i)
     doc.page.margins.bottom = 0
     doc.font('Helvetica').fontSize(7.5).fillColor(cinza).text(
-      `Algtrix B2B · Pedido ${resumo.pedidoId} · Base ${COMPETENCIA} · Uso interno, não transferível · Página ${i + 1} de ${range.count}`,
+      `Algtrix B2B · Pedido ${resumo.pedidoId} · Dados da Receita Federal · Uso interno, não transferível · Página ${i + 1} de ${range.count}`,
       36,
       doc.page.height - 26,
       { width: larguraUtil, align: 'center', lineBreak: false },

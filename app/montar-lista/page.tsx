@@ -5,7 +5,7 @@ import { FileXls } from '@phosphor-icons/react/dist/ssr/FileXls'
 import { Navbar } from '@/sections/Navbar'
 import { Footer } from '@/sections/Footer'
 import { ListaBuilder } from '@/components/ListaBuilder'
-import { COMPETENCIA, TOTAL_EMPRESAS } from '@/lib/catalog'
+import { TOTAL_EMPRESAS } from '@/lib/catalog'
 import { DESCONTOS_CARRINHO, formatarBRL, formatarNumero } from '@/lib/pricing-engine'
 
 export const metadata: Metadata = {
@@ -34,7 +34,7 @@ export default function MontarListaPage() {
             </h1>
             <p className="mt-4 text-[15px] leading-relaxed text-algtrix-muted sm:text-base">
               {formatarNumero(TOTAL_EMPRESAS)} empresas ativas em 5.572 cidades das 27 UFs, com dados da Receita
-              Federal (base {COMPETENCIA}). Veja a quantidade e o preço antes de pagar. Sem assinatura.
+              Federal e base atualizada. Veja a quantidade e o preço antes de pagar. Sem assinatura.
             </p>
           </header>
 

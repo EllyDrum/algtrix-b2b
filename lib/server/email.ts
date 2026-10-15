@@ -42,7 +42,7 @@ export async function enviarEmailEntrega(pedido: Pedido, linkPedido: string): Pr
     <h2>Sua lista está pronta</h2>
     <p>Olá${pedido.nome ? ` ${escapar(pedido.nome)}` : ''}, o pagamento do pedido <strong>${pedido.id}</strong> foi confirmado e os arquivos já estão disponíveis.</p>
     <ul>${linhas}</ul>
-    <p>Total pago: <strong>${brl(pedido.totalCentavos)}</strong> · Base: competência ${pedido.competencia} (Receita Federal)</p>
+    <p>Total pago: <strong>${brl(pedido.totalCentavos)}</strong> · Dados da Receita Federal, base atualizada</p>
     <p style="margin:28px 0"><a href="${linkPedido}" style="background:#059669;color:#fff;padding:14px 22px;border-radius:999px;text-decoration:none;font-weight:bold">Baixar meus arquivos</a></p>
     <p style="font-size:13px;color:#555">Guarde este e-mail: o link acima dá acesso permanente aos seus downloads. Licença de uso interno, não transferível. Ao usar os contatos, observe a LGPD.</p>
   </div>`
