@@ -34,7 +34,9 @@ export function statusLoja(): StatusLoja {
   const estatico = pixEstaticoConfigurado()
   const simulado = pagamentoSimuladoPermitido()
   const stripe = stripeConfigurado()
-  const pix = mp ? 'mercadopago' : estatico ? 'estatico' : null
+  // MP_SOMENTE_CARTAO=1: o Mercado Pago cobra só o cartão; o Pix continua na chave estática da empresa.
+  const mpSomenteCartao = process.env.MP_SOMENTE_CARTAO === '1'
+  const pix = mp && !(mpSomenteCartao && estatico) ? 'mercadopago' : estatico ? 'estatico' : null
   const cartaoProvedor = stripe ? 'stripe' : mp ? 'mercadopago' : null
   return {
     vendasAtivas: entregaOk && (simulado || pix !== null || cartaoProvedor !== null),
