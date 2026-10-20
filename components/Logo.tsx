@@ -23,7 +23,7 @@ export function Logo({
         alt="Algtrix"
         width={tagline ? 796 : 477}
         height={tagline ? 200 : 120}
-        className={cn('w-auto object-contain', tagline ? 'h-14' : compact ? 'h-8' : 'h-9')}
+        className={cn('w-auto object-contain', tagline ? 'h-10' : compact ? 'h-6' : 'h-7')}
       />
       <span className="rounded-md border border-algtrix-borderAccent bg-algtrix-accentSoft px-1.5 py-0.5 font-mono text-[10px] font-medium uppercase tracking-[0.12em] text-algtrix-accent">
         B2B
