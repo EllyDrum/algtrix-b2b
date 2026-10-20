@@ -20,7 +20,7 @@ export function Footer() {
       <div className="mx-auto max-w-pageWide px-5 py-12 sm:px-8">
         <div className="grid gap-10 md:grid-cols-[1.4fr_1fr_1fr]">
           <div>
-            <Logo />
+            <Logo tagline />
             <p className="mt-4 max-w-[44ch] text-sm leading-relaxed text-algtrix-muted">
               Listas de empresas com dados oficiais da Receita Federal, para prospecção B2B. Base atualizada.
             </p>
